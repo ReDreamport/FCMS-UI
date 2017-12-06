@@ -3,9 +3,12 @@
 import $ = require("jquery")
 
 import { api } from "./api"
-import { setMeta, setUser } from "./globals"
+import { formatDate, isSortableField, uniqueId } from "./common"
+import { digestEntity, digestId, ensureValueIsArray, hasEntityPermission,
+    isSystemFieldName, optionsArrayToMap, tdStyleOfField } from "./entity"
+import { toListEntity } from "./entity/list"
+import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
-import { toListEntity } from "./list-entity"
 import { pInitMenu } from "./menu"
 
 extend()
@@ -15,6 +18,7 @@ $(() => {
     .then(pFetchMeta)
     .then(pInitMenu)
     .then(function() {
+        initJadeContext()
         initEvents()
         reopenPages()
     }).catch(function(e) {
@@ -34,6 +38,22 @@ function pFetchMeta() {
     return q.then(function(meta: any) {
         setMeta(meta)
     })
+}
+
+function initJadeContext() {
+    (window as any).JC = {
+        hasEntityPermission,
+        tdStyleOfField,
+        isSystemFieldName,
+        optionsArrayToMap,
+        ensureValueIsArray,
+        formatDate,
+        getMeta,
+        digestEntity,
+        digestId,
+        isSortableField,
+        uniqueId
+    }
 }
 
 function initEvents() {
@@ -78,7 +98,7 @@ function initEntityGlobalEvent() {
         e.preventDefault()
         e.stopPropagation()
 
-        const $this = $(this)
+        const $this = $(e.target).closest(".to-list-entity")
         toListEntity($this.mustAttr("entityName"))
     })
 }

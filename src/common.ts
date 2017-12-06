@@ -39,3 +39,26 @@ export function dateStringToInt(val: string, format: string) {
     if (!val) return undefined
     return moment(val, format).valueOf()
 }
+
+export function formatDate(v: any, format: string) {
+    if (!v) return ""
+    const d = moment(v)
+    return d.format(format)
+}
+
+export function fileObjectToLink(obj: {path: string}) {
+    const path = obj && obj.path
+    return path && ("/r/" + path) || ""
+}
+
+export function isSortableField(fieldMeta: FieldMeta) {
+    return fieldMeta.name !== "_id" && fieldMeta.name !== "_version"
+        && !fieldMeta.multiple && fieldMeta.type !== "Reference"
+        && fieldMeta.type !== "Image" && fieldMeta.type !== "File"
+        && fieldMeta.type !== "Component" && fieldMeta.type !== "Password"
+}
+
+let uniqueIdNext = 0
+export function uniqueId() {
+    return ++uniqueIdNext
+}
