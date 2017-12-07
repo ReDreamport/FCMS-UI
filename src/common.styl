@@ -1,0 +1,45 @@
+@import "./mixin"
+
+.btn
+    box-sizing border-box
+    display inline-block
+    hh(inputHeight)
+    background mainColor
+    color #fff
+    text-decoration none
+    padding 0 12px
+    vertical-align middle
+    font-size inputFontSize
+
+.plain-btn
+    display inline-block
+    margin 0 8px 8px 0
+    text-decoration none
+
+    &:hover
+        text-decoration underline
+
+.btn-separator
+    display inline-block
+    margin 0 8px
+    height 10px
+    width 8px
+    background #ddd
+    vertical-align middle
+
+input[type="text"]
+input[type="password"]
+input[type="number"]
+select
+    box-sizing border-box
+    display inline-block
+    hh(inputHeight)
+    border 1px solid mainColor
+    padding 0 4px
+    vertical-align middle
+    font-size inputFontSize
+
+table.simple
+    th, td
+        padding 8px
+        border 1px solid #cdcdcd

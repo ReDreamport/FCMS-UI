@@ -6,7 +6,8 @@ import _ = require("lodash")
 import { alertAjaxError, alertAjaxIfError, api } from "../../api"
 import { arrayToMapTrue,
     pxToNumber, removeFromArray } from "../../common"
-import { loadDigestedEntities,
+import { ENTITY_LIST_TD_PADDING,
+    loadDigestedEntities,
     tdStyleOfField } from "../../entity"
 import { getMeta } from "../../globals"
 import { closeById, openOrAddPage } from "../../page"
@@ -47,7 +48,7 @@ class EntityLister {
             .mustFindOne(".columns-display:first")
 
         const $tableScroll = $(ST.ListEntityTable({fieldNames: this.fieldNames,
-            entityMeta}))
+            entityMeta})).appendTo($view)
         this.$table = $tableScroll.mustFindOne("table:first")
 
         this.displayColumns()
@@ -126,6 +127,8 @@ class EntityLister {
             const fm = fields[fn]
             if (fn === "_id" || fn === "_version") return
             if (fm.type === "Password" || fm.hideInListPage) return
+            if (fm.notShow)
+                return
             // if fm.notShow && not F.checkAclField(entityMeta.name, fn, 'show')
             // return
             fieldNames.push(fn)
@@ -148,7 +151,8 @@ class EntityLister {
             if (this.columnsDisplay[fieldName]) {
                 this.$table.find(".col-" + fieldName).show()
                 const tdStyle = tdStyleOfField(fields[fieldName])
-                tableWidth += pxToNumber(tdStyle.width)
+                tableWidth += (pxToNumber(tdStyle.width)
+                    + ENTITY_LIST_TD_PADDING * 2)
             } else {
                 this.$table.find(".col-" + fieldName).hide()
             }

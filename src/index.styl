@@ -29,9 +29,29 @@ html, body
 
     .pages-switches
         absolute(0, headerBtnWidth, 0, headerBtnWidth)
+        z-index 50
 
     .page-switch
         display inline-block
+        box-sizing border-box
+        hh(siteHeaderHeight)
+        padding 0 8px
+        font-size 13px
+        vertical-align top
+        border-bottom 3px solid transparent
+        text-decoration none
+        color #000
+
+        .close-page
+            width 8px
+            text-align center
+            margin-left 8px
+            &:hover
+                text-align 16px
+        
+        &.current 
+            border-bottom 3px solid mainColor
+            color mainColor
 
 .main-body
     menuBarLeft = 180px
@@ -43,10 +63,19 @@ html, body
 
     .main-menu-bar
         absolute(siteHeaderHeight, auto, 0, 0)
+        box-sizing border-box
         width menuBarLeft
         border-right 1px solid borderColor
     
     .pages
         absolute(siteHeaderHeight, 0, 0, menuBarLeft)
 
+    .page-parent
+        height 100%
+        overflow auto
+
+        .view
+            padding 16px
+
+    
 

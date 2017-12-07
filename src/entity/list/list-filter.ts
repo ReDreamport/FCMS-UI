@@ -1,5 +1,7 @@
 // cSpell:words nempty jqxhr
 
+import $ = require("jquery")
+
 import { alertAjaxIfError, api } from "../../api"
 import { dateStringToInt } from "../../common"
 import { digestEntityById, isFieldOfInputTypeOption, isFieldOfTypeDateOrTime,
@@ -69,8 +71,8 @@ class EntityFilterItem {
         }
 
         const operator = this.$operator.val() as string
-        this.$operator.html(ST.FilterOperatorOption({OPERATOR_LABELS,
-            operators}))
+        this.$operator.html(ST.FilterOperatorOption({
+            operatorLabels: OPERATOR_LABELS, operators}))
         if (operator) this.$operator.val(operator)
 
         this.operatorChanged()

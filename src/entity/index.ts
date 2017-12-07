@@ -4,28 +4,42 @@ import { api } from "../api"
 import { entityListToMap } from "../common"
 import { getMeta, getUser } from "../globals"
 
+export const ENTITY_LIST_TD_PADDING = 4
+
 export function tdStyleOfField(fm: FieldMeta) {
+    let style: any
     switch (fm.type) {
     case "ObjectId":
     case "Reference":
     case "String":
     case "Password":
-        return {"width": "140px", "text-align": "center"}
+        style = {"width": "140px", "text-align": "center"}
+        break
     case "Boolean":
-        return {"width": "30px", "text-align": "center"}
+        style = {"width": "30px", "text-align": "center"}
+        break
     case "Int":
     case "Float":
-        return {"width": "80px", "text-align": "right"}
+        style = {"width": "80px", "text-align": "right"}
+        break
     case "Date":
     case "Time":
     case "DateTime":
-        return {"width": "160px", "text-align": "center"}
+        style = {"width": "160px", "text-align": "center"}
+        break
     case "Image":
     case "File":
-        return {"width": "90px", "text-align": "center"}
+        style = {"width": "90px", "text-align": "center"}
+        break
     default:
-        return {"width": "100px", "text-align": "center"}
+        style = {"width": "100px", "text-align": "center"}
+        break
     }
+    if (style) {
+        style.paddingLeft = `${ENTITY_LIST_TD_PADDING}px`
+        style.paddingRight = `${ENTITY_LIST_TD_PADDING}px`
+    }
+    return style
 }
 
 interface LoadRefEntityTask {

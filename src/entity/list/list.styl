@@ -1,0 +1,36 @@
+@import "../../mixin"
+
+.view.list-entity
+    .actions
+        margin-bottom 16px
+
+.entity-list-actions
+    margin-bottom 16px
+    
+    .tools
+        .btn, span, input, select
+            display inline-block
+            hh(inputHeight)
+            margin-right 8px
+            margin-bottom 8px
+            vertical-align middle
+            font-size 13px
+
+    .page-no, .page-size
+        width 48px
+
+    .sort-field
+        width 100px
+    .sort-order
+        width 60px
+
+    .filters-name
+        width 150px
+        margin-right 8px
+
+table.entity-list
+    font-family monospace
+    
+    td
+        word-break break-all
+        white-space nowrap

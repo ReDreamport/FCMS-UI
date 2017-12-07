@@ -6,10 +6,13 @@ import { api } from "./api"
 import { formatDate, isSortableField, uniqueId } from "./common"
 import { digestEntity, digestId, ensureValueIsArray, hasEntityPermission,
     isSystemFieldName, optionsArrayToMap, tdStyleOfField } from "./entity"
+import { toUpdateEntity } from "./entity/edit"
 import { toListEntity } from "./entity/list"
+import { toViewEntity } from "./entity/view"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
 import { pInitMenu } from "./menu"
+import { openPageById } from "./page"
 
 extend()
 
@@ -62,6 +65,11 @@ function initEvents() {
         location.href = `/sso/client/sign-out?callback=${callback}`
     })
 
+    $(".main-header .pages-switches").on("click", ".page-switch", function() {
+        const pageId = $(this).mustAttr("pageId")
+        openPageById(pageId)
+    })
+
     initEntityGlobalEvent()
 }
 
@@ -72,26 +80,26 @@ function initEntityGlobalEvent() {
         e.preventDefault()
         e.stopPropagation()
 
-        // const $this = $(this)
-        // const id = $this.mustAttr("_id")
-        // if (!id)return
-        // F.toViewEntity($this.attr('entityName'), _id)
+        const $this = $(e.target).closest(".to-view-entity")
+        const id = $this.mustAttr("_id")
+        if (!id) return
+        toViewEntity($this.mustAttr("entityName"), id)
     })
 
     $doc.on("click", ".to-update-entity", e => {
         e.preventDefault()
         e.stopPropagation()
 
-        // const $this = $(this)
-        // F.toUpdateEntity($this.attr("entityName"), $this.attr("_id"))
+        const $this = $(this)
+        toUpdateEntity($this.mustAttr("entityName"), $this.mustAttr("_id"))
     })
 
     $doc.on("click", ".to-add-entity", e => {
         e.preventDefault()
         e.stopPropagation()
 
-        // const $this = $(this)
-        // F.toUpdateEntity($this.attr("entityName"))
+        const $this = $(this)
+        toUpdateEntity($this.mustAttr("entityName"))
     })
 
     $doc.on("click", ".to-list-entity", e => {

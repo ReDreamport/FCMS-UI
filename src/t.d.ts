@@ -27,6 +27,12 @@ declare const ST: {
     FilterItem: STFunc;
     FilterOperatorOption: STFunc;
     FilterInput: STFunc;
+    PageSwitch: STFunc;
+    ViewEntity: STFunc;
+    ViewEntityFields: STFunc;
+    EditEntity: STFunc;
+    Form: STFunc;
+    Field: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -56,7 +62,7 @@ interface FilePath {
 }
 
 interface EntityValue {
-    _id: string
+    _id?: string
     [k: string]: any
 }
 
@@ -68,10 +74,23 @@ interface FieldMeta {
     options: any[]
     refEntity: string
     hideInListPage: boolean
+    notShow: boolean
+    noCreate: boolean
+    noEdit: boolean
+    inputFunc?: string
 }
 
 interface EntityMeta {
     name: string
     digestFields?: string
+    editEnhanceFunc?: string
     fields: {[fieldName: string]: FieldMeta}
+}
+
+interface EntityForm {
+    entityName: string
+    entityMeta: EntityMeta
+    fid: string
+    fClass: string
+    $form: JQuery
 }
