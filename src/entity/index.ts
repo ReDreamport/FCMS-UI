@@ -182,3 +182,10 @@ export function ensureValueIsArray(value: any) {
     else
         return value ? [value] : []
 }
+
+export function normalizeSingleOrArray<T>(values: T[], multiple: boolean) {
+    if (multiple)
+        return values
+    else
+        return values.length ? values[0] : null
+}

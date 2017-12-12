@@ -90,8 +90,8 @@ export function toUpdateEntity(entityName: string, id?: string) {
 }
 
 // 编辑并返回给调用者
-// export function openEditEntityDialog(entityName: string,
-//     entityValue: EntityValue, callback: (ev: EntityValue) => void) {
+export function openEditEntityDialog(entityName: string,
+    entityValue: EntityValue, callback: (ev: EntityValue) => void) {
 //     $view = $(FT.EditEntity())
 //     form = F.Form.buildRootForm(entityName, entityValue)
 //     $view.append(form.$form)
@@ -111,4 +111,4 @@ export function toUpdateEntity(entityName: string, id?: string) {
 
 //         callback(entity)
 //         win.close()
-// }
+}

@@ -3,6 +3,9 @@
 
 import moment = require("moment")
 
+const SYSTEM_FIELDS = ["_id", "_version", "_createdOn", "_createdBy",
+    "_modifiedOn", "_modifiedBy"]
+
 export function cloneByJSON(source: any) {
     return JSON.parse(JSON.stringify(source))
 }
@@ -61,4 +64,24 @@ export function isSortableField(fieldMeta: FieldMeta) {
 let uniqueIdNext = 0
 export function uniqueId() {
     return ++uniqueIdNext
+}
+
+export function equalOrContainInArray(target: string,
+    valueOrArray: string | string[]) {
+    if (!valueOrArray) return false
+    if (target === valueOrArray) return true
+    return valueOrArray.indexOf(target) >= 0
+}
+
+export function getListFieldNames(fields: {[fn: string]: FieldMeta}) {
+    const names: string[] = []
+    const fnList = Object.keys(fields)
+    for (const fieldName of fnList) {
+        const fm = fields[fieldName]
+        if (fm.hideInListPage) continue
+        if (SYSTEM_FIELDS.indexOf(fieldName) >= 0) continue
+        names.push(fieldName)
+    }
+
+    return names
 }

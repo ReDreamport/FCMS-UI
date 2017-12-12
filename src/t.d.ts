@@ -33,6 +33,26 @@ declare const ST: {
     EditEntity: STFunc;
     Form: STFunc;
     Field: STFunc;
+    Check: STFunc;
+    CheckList: STFunc;
+    CheckListItem: STFunc;
+    CheckListGroup: STFunc;
+    Date: STFunc;
+    DateTime: STFunc;
+    File: STFunc;
+    FileItem: STFunc;
+    Float: STFunc;
+    Image: STFunc;
+    ImageItem: STFunc;
+    InlineComponent: STFunc;
+    Int: STFunc;
+    JSON: STFunc;
+    Password: STFunc;
+    PopupComponent: STFunc;
+    PopupComponentItem: STFunc;
+    Reference: STFunc;
+    ReferenceItem: STFunc;
+    RichText: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -78,6 +98,10 @@ interface FieldMeta {
     noCreate: boolean
     noEdit: boolean
     inputFunc?: string
+    optionsDependOnField?: string
+    optionsFunc?: string
+    groupedOptions?: any
+    optionWidth?: number
 }
 
 interface EntityMeta {
@@ -94,3 +118,18 @@ interface EntityForm {
     fClass: string
     $form: JQuery
 }
+
+interface SelectOption {
+    name: string
+    label: string
+    items: SelectOption[]
+}
+
+interface UploadResult {
+    path: string,
+    size?: number
+}
+
+type UploadCallback = (r: UploadResult[] | null) => void
+
+declare const wangEditor: any

@@ -8,7 +8,7 @@ import { toastError } from "../toast"
 
 let GLOBAL_FORM_ID = 0
 
-const inputTypes: any = {}
+export const inputTypes: any = {}
 
 type FieldInputChangeListener = (fid: string, fieldName: string) => void
 
@@ -272,7 +272,7 @@ function collectFieldInput(form: EntityForm, fieldMeta: FieldMeta) {
 
 // 收集界面上输入的实体的值
 export function collectFormInput(form: EntityForm, formValue: EntityValue,
-    isCreate: boolean) {
+    isCreate?: boolean) {
 
     const fields = form.entityMeta.fields
     const fieldNames = Object.keys(fields)
