@@ -12,7 +12,7 @@ import { toViewEntity } from "./entity/view"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
 import { pInitMenu } from "./menu"
-import { openPageById } from "./page"
+import { closeById, openPageById } from "./page"
 
 extend()
 
@@ -68,6 +68,13 @@ function initEvents() {
     $(".main-header .pages-switches").on("click", ".page-switch", function() {
         const pageId = $(this).mustAttr("pageId")
         openPageById(pageId)
+    })
+
+    $(".main-header .pages-switches").on("click", ".close-page", function(e) {
+        e.stopPropagation()
+        e.preventDefault()
+        const pageId = $(this).closest(".page-switch").mustAttr("pageId")
+        closeById(pageId)
     })
 
     initEntityGlobalEvent()

@@ -86,7 +86,7 @@ export function upload($file: JQuery, entityName: string, fieldName: string,
 }
 
 class Relative {
-    constructor(private apiRoot: string) { }
+    constructor(private myApiRoot: string) { }
 
     get(relativeUrl: string, data?: any,
                settings?: JQuery.AjaxSettings) {
@@ -110,7 +110,7 @@ class Relative {
 
     private method(method: string, relativeUrl: string, data?: any,
                    settings?: JQuery.AjaxSettings) {
-        const url = this.apiRoot + relativeUrl
+        const url = this.myApiRoot + relativeUrl
         const o = ajaxSettings(method, data, settings)
         return Promise.resolve($.ajax(url, o).fail(failHandler()))
     }

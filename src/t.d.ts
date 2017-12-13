@@ -53,6 +53,10 @@ declare const ST: {
     Reference: STFunc;
     ReferenceItem: STFunc;
     RichText: STFunc;
+    Select: STFunc;
+    Text: STFunc;
+    TextArea: STFunc;
+    Time: STFunc;
 }
 
 declare const CKEDITOR: any

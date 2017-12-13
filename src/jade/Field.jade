@@ -1,0 +1,30 @@
+.fw-field(name=field.name, class=fieldClass)
+    .fw-field-title
+        .field-label=field.label
+        .field-actions
+            if field.inputType == 'File' || field.inputType == 'Image'
+                a.select-file.field-action-btn(href="javascript:")
+                    | 选择文件
+                    // IE 的文件控件安全限制
+                    input.file.file-field(name='file' + F.uniqueId(), type="file", multiple=true)
+                if field.multiple
+                    a.fw-remove-all-file.field-action-btn(href="javascript:") 删除全部
+                    a.fw-hide-all-file.field-action-btn(href="javascript:") 收起
+                else
+            else if field.inputType == 'PopupComponent'
+                if field.multiple
+                    a.fw-add-item-component.field-action-btn(href="javascript:") 添加
+                    a.fw-remove-all-item-component.field-action-btn(href="javascript:") 全部删除
+                    a.fw-hide-all-item-component.field-action-btn(href="javascript:") 收起
+            else if field.inputType == 'Reference'
+                a.fw-add-ref.field-action-btn(href="javascript:") 添加
+                a.fw-remove-all-ref.field-action-btn(href="javascript:") 全部删除
+                if field.multiple
+                    a.fw-hide-all-ref.field-action-btn(href="javascript:") 收起
+            else if field.inputType != 'CheckList'
+                if field.multiple
+                    a.fw-field-add-item.field-action-btn(href="javascript:") 添加
+                    a.fw-field-remove-all-items.field-action-btn(href="javascript:") 全部删除
+                    a.fw-field-hide-items.field-action-btn(href="javascript:") 收起
+    .fw-field-input
+    .fw-field-tip=field.useGuide

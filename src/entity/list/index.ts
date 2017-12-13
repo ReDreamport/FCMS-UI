@@ -210,7 +210,7 @@ export function toListEntity(entityName: string) {
 
     const pageId = `list-entity-${entityName}`
     const entityMeta = meta.entities[entityName]
-    const title = `${entityMeta.label} 列表`
+    const title = entityMeta.label
 
     openOrAddPage(pageId, title, "toListEntity", [entityName], ctx => {
         const $view = $(ST.ListEntity({entityName}))

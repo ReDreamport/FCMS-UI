@@ -1,0 +1,4 @@
+.fw-field-item(class=fClass, file=JSON.stringify(file))
+    .field-actions-bar
+        a.fw-remove-file.field-action-btn(href="javascript:") 删除
+    a(href=F.fileObjectToLink(file), target="_blank") 下载[#{F.showFileSize(file.size)}]

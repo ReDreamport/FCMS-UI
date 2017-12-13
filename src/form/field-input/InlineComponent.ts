@@ -19,7 +19,7 @@ export function buildFieldItem(form: EntityForm, fieldMeta: FieldMeta,
 export function getInput(form: EntityForm, fieldName: string) {
     const $field = get$field(form, fieldName)
     const values: any[] = []
-    const $form = $field.find(".fw-field-item-input.#{form.fClass}>.form")
+    const $form = $field.find(`.fw-field-item-input.${form.fClass}>.form`)
     $form.iterate($this => {
         const comValue = {}
         const subForm = $formToForm($this)

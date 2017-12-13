@@ -1,8 +1,10 @@
 @import "../mixin"
 
 .main-menu-bar
-    padding 12px 8px
+    box-sizing border-box
+    padding 12px 0
     overflow auto
+    border-right 1px solid cBorder
 
     .menu-group
         border-bottom 1px solid borderColor
@@ -11,7 +13,17 @@
         display block
         hh(36px)
         font-size 13px
+        color cBlue
+        text-decoration none
+        padding 0 12px
+        textOverflow()
+        &:hover
+            background cBlue
+            color #fff
     
     .menu-group-title
         text-align right
         hh(36px)
+        padding 0 16px
+        font-size 14px
+        color cRed
