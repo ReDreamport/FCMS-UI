@@ -1,15 +1,20 @@
 @import "./mixin"
 
+a
+    color cBlue
+
 .btn
     box-sizing border-box
     display inline-block
     hh(inputHeight)
-    background mainColor
-    color #fff
     text-decoration none
     padding 0 12px
     vertical-align middle
     font-size inputFontSize
+    border-radius 6px
+    border 1px solid cBlue
+    color cBlue
+    
 
 .plain-btn
     display inline-block
@@ -22,9 +27,10 @@
 .btn-separator
     display inline-block
     margin 0 8px
-    height 10px
+    height 8px
     width 8px
-    background #ddd
+    border-radius 4px
+    background cInputBorder
     vertical-align middle
 
 input[type="text"]
@@ -34,10 +40,11 @@ select
     box-sizing border-box
     display inline-block
     hh(inputHeight)
-    border 1px solid mainColor
+    border 1px solid cInputBorder
     padding 0 4px
     vertical-align middle
     font-size inputFontSize
+    border-radius 6px
 
 table.simple
     th, td

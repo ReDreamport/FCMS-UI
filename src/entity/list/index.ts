@@ -10,11 +10,12 @@ import { ENTITY_LIST_TD_PADDING,
     loadDigestedEntities,
     tdStyleOfField } from "../../entity"
 import { getMeta } from "../../globals"
-import { closeById, openOrAddPage } from "../../page"
+import { Page } from "../../page"
+import { closeByKey } from "../../router"
 import { toastSuccess } from "../../toast"
 import { EntityListFilter } from "./list-filter"
 
-const SYSTEM_FIELDS = ["_createdOn", "_createdBy", "_modifiedOn", "_modifiedBy"]
+const CREATE_MODIFY = ["_createdOn", "_createdBy", "_modifiedOn", "_modifiedBy"]
 
 // 封装实体列表功能
 class EntityLister {
@@ -33,7 +34,7 @@ class EntityLister {
 
     constructor(private entityMeta: EntityMeta,
         private $view: JQuery,
-        private pageId: string,
+        private pageKey: string,
         private onPageRefresh?: () => void) {
 
         const entityName = entityMeta.name
@@ -135,7 +136,7 @@ class EntityLister {
         })
 
         // 其他系统字段放最后
-        for (const systemField of SYSTEM_FIELDS) {
+        for (const systemField of CREATE_MODIFY) {
             removeFromArray(fieldNames, systemField)
             fieldNames.push(systemField)
         }
@@ -177,7 +178,7 @@ class EntityLister {
         const q = api.get("entity/" + this.entityMeta.name, query)
         q.catch(jqxhr => {
             alertAjaxError(jqxhr)
-            closeById(this.pageId) // 加载失败移除页面
+            closeByKey(this.pageKey) // 加载失败移除页面
         })
         q.then(r => {
             // TODO $view => $actions
@@ -205,21 +206,20 @@ class EntityLister {
     }
 }
 
-export function toListEntity(entityName: string) {
-    const meta = getMeta()
+export class ListEntity extends Page {
+    pBuild() {
+        const entityName = this.routeCtx.params.entityName
+        const meta = getMeta()
+        const entityMeta = meta.entities[entityName]
+        this.setTitle(entityMeta.label)
 
-    const pageId = `list-entity-${entityName}`
-    const entityMeta = meta.entities[entityName]
-    const title = entityMeta.label
+        const $page = $(ST.ListEntity({entityName}))
+            .appendTo(this.$pageParent)
 
-    openOrAddPage(pageId, title, "toListEntity", [entityName], ctx => {
-        const $view = $(ST.ListEntity({entityName}))
-            .appendTo(ctx.$pageParent)
-
-        const entityLister = new EntityLister(entityMeta, $view, pageId)
+        const entityLister = new EntityLister(entityMeta, $page, this.key)
         const {$table, $refreshPageBtn} = entityLister
 
-        $view.mustFindOne(".remove-entities:first").click(function() {
+        $page.mustFindOne(".remove-entities:first").click(function() {
             const ids: string[] = []
             $table.find(".select:checked").iterate($s => {
                 const $tr = $s.closest("tr")
@@ -236,6 +236,5 @@ export function toListEntity(entityName: string) {
         })
 
         // TODO date picker enableDatePicker($view.find(".date-picker"), {})
-
-    })
+    }
 }
