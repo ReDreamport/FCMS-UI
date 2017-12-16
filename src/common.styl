@@ -6,20 +6,26 @@ a
 .btn
     box-sizing border-box
     display inline-block
-    hh(inputHeight)
+    hh(btnHeight)
     text-decoration none
-    padding 0 12px
+    padding 0 14px
     vertical-align middle
-    font-size inputFontSize
-    border-radius 6px
-    border 1px solid cBlue
+    font-size btnFontSize
+    border-radius 4px
+    border 1px solid cBlue + 50%
+    background cBlue + 95%
     color cBlue
-    
+
+    &:hover
+        background cBlue + 80%
+
 
 .plain-btn
     display inline-block
+    hh(btnHeight)
     margin 0 8px 8px 0
     text-decoration none
+    font-size btnFontSize
 
     &:hover
         text-decoration underline
@@ -44,9 +50,16 @@ select
     padding 0 4px
     vertical-align middle
     font-size inputFontSize
-    border-radius 6px
+    border-radius 4px
 
+input[type="checkbox"]
+input[type="radio"]
+    display inline-block
+    hh(inputHeight)
+    vertical-align middle
+    
 table.simple
     th, td
-        padding 8px
-        border 1px solid #cdcdcd
+        padding 8px 12px
+        border-top 1px solid cTableBorder
+        border-bottom 1px solid cTableBorder

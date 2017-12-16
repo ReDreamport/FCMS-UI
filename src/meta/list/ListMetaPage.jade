@@ -1,0 +1,15 @@
+.page.page-list-meta
+    .page-top-actions
+        a.btn(href="#!meta/entity-add") 添加实体
+
+    table.simple
+        each entityNames, groupName in entityNamesByGroup
+            tr
+                td.group-name(colspan=2)=groupName
+                each entityName in entityNames
+                    - var entity = entityMetaMap[entityName]
+                    tr
+                        td=entity.label
+                        td
+                            a(href="#!meta/entity/" + entityName)=entityName
+                        

@@ -1,11 +1,11 @@
-let gMeta: any
+let gMeta: MetaStore
 let gUser: User
 
 export function getMeta() {
     return gMeta
 }
 
-export function setMeta(meta: any) {
+export function setMeta(meta: MetaStore) {
     gMeta = meta
 }
 

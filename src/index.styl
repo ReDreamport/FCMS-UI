@@ -101,15 +101,18 @@ html, body
         width menuBarLeft
         border-right 1px solid borderColor
     
-    .pages
+    >.pages
         absolute(siteHeaderHeight, 0, 0, menuBarLeft)
 
     .page-parent
         height 100%
-        overflow hidden
+        overflow auto
 
-        .view
-            padding 16px
+        .view, .page
+            padding 32px
+
+            .page-top-actions
+                margin-bottom 32px
 
     
 .page.page-not-found

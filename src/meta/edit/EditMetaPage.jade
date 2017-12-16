@@ -1,0 +1,109 @@
+.page.page-edit-meta
+    .page-top-actions
+        a.save.btn(href="javascript:;") 保存
+    .entity-form
+        mixin Field(name, label, tip, width)
+            - var w = width || 1
+            .field(field-name=name, class="w" + w)
+                .label=label
+                block
+                .tip=tip
+        
+        mixin Select(options, value)
+            select
+                each o in options
+                    option(value=o[0], selected=o[0]===value)=o[1]
+                    
+        .section
+            .section-title 核心
+            .row
+                +Field("name", "名称")
+                    input(type="text", value=entityMeta.name)
+                +Field("label", "显示名")
+                    input(type="text", value=entityMeta.label)
+                +Field("noCreate", "禁止新增")
+                    input(type="checkbox", checked=entityMeta.noCreate)
+                +Field("noEdit", "禁止编辑")
+                    input(type="checkbox", checked=entityMeta.noEdit)
+                +Field("noDelete", "禁止删除")
+                    input(type="checkbox", checked=entityMeta.noDelete)
+                +Field("singleton", "单例")
+                    input(type="checkbox", checked=entityMeta.singleton)
+
+        .section
+            .section-title 显示
+            .row
+                +Field("displayGroup", "显示分组")
+                    input(type="text", value=entityMeta.displayGroup)
+                +Field("digestFields", "摘要字段")
+                    input(type="text", value=entityMeta.digestFields)
+                +Field("editEnhanceFunc", "编辑增强脚本名")
+                    input(type="text", value=entityMeta.editEnhanceFunc)
+                +Field("viewEnhanceFunc", "详情增强脚本名")
+                    input(type="text", value=entityMeta.viewEnhanceFunc)
+        
+        .section
+            .section-title 存储
+            .row
+                +Field("db", "数据库类型")
+                    +Select([["mongodb", "MongoDB"], ["mysql", "MySQL"], ["none", "不使用数据库"]], entityMeta.db)
+                +Field("dbName", "数据库名")
+                    input(type="text", value=entityMeta.dbName)
+                +Field("tableName", "表名")
+                    input(type="text", value=entityMeta.tableName)
+            .row
+                +Field("mongoIndexes", "MongoDB 索引", "", "p100")
+                    .field-actions
+                        a.add-mongo-index.btn(href="javascript:") 添加
+                    table
+                        thead
+                            tr
+                                th(style="width: 60px;")
+                                th(style="width: 120px;") 索引名
+                                th(style="width: 200px;") 字段
+                                th(style="width: 50px;") 唯一
+                                th(style="width: 50px;") 稀疏
+                                th(style="width: 150px;") 错误消息
+                        tbody.mongo-indexes
+            .row
+                +Field("mysqlIndexes", "MySQL 索引", "", "p100")
+                    .field-actions
+                        a.add-mysql-index.btn(href="javascript:") 添加
+                    table
+                        thead
+                            tr
+                                th(style="width: 60px;")
+                                th(style="width: 120px;") 索引名
+                                th(style="width: 200px;") 字段
+                                th(style="width: 50px;") 唯一
+                                th(style="width: 50px;") 类型
+                                th(style="width: 150px;") 错误消息
+                        tbody.mysql-indexes
+
+        .section
+            .section-title 字段
+            .field
+                .field-actions
+                    a.add-field.btn(href="javascript:") 添加
+                table
+                    thead
+                        tr
+                            th(style="width: 100px;")
+                            th(style="width: 120px;") 字段名
+                            th(style="width: 120px;") 显示名
+                            th(style="width: 80px;") 类型
+                            th(style="width: 100px;") 关联实体
+                            th(style="width: 50px;") 多值
+                            th(style="width: 50px;") 快查
+                    tbody.fields
+
+//-             fieldGroups: {
+//-                 name: "fieldGroups", label: "字段分组", type: "Component",
+//-                 refEntity: "F_KeyValue", inputType: "PopupComponent",
+//-                 multiple: true
+//-             },
+//-             fields: {
+//-                 name: "fields", label: "字段列表",  type: "Component",
+//-                 refEntity: "F_FieldMeta", multiple: true,
+//-                 inputType: "PopupComponent"
+//-             }

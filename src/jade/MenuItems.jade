@@ -1,8 +1,3 @@
-if user.admin
-    .menu-group
-        .menu-group-title Menu
-        a.menu-item.to-list-entity(href="#!list/F_Menu") 菜单
-        
 each mg in menuGroups
     .menu-group
         if mg.label
@@ -13,5 +8,10 @@ each mg in menuGroups
                 if em
                     a.menu-item.to-list-entity(href="#!list/" + mi.toEntity)= mi.label
             else if mi.callFunc
-                a.menu-item.call-func(href="javascript:", func=mi.callFunc)= mi.label
+                a.menu-item.call-func(href="#!/call/" + mi.callFunc)= mi.label
 
+if user.admin
+    .menu-group
+        .menu-group-title Menu
+        a.menu-item.to-list-entity(href="#!list/F_Menu") 菜单
+        

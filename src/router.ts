@@ -3,7 +3,9 @@
 
 import $ = require("jquery")
 import page = require("page")
-import { ListEntity } from "./entity/list/index"
+import { ListEntity } from "./entity/list"
+import { CreateMeta, EditMeta } from "./meta/edit/index"
+import { ListMeta } from "./meta/list"
 import { NotFoundPage, Page } from "./Page"
 
 const PageClasses: {[pattern: string]: typeof Page} = {}
@@ -12,6 +14,10 @@ const openOrders: string[] = []
 
 export function initRouter() {
     PageClasses["/list/:entityName"] = ListEntity
+
+    PageClasses["/meta"] = ListMeta
+    PageClasses["/meta/entity/:entityName"] = EditMeta
+    PageClasses["/meta/entity"] = CreateMeta
 
     PageClasses["*"] = NotFoundPage
 
@@ -29,6 +35,7 @@ function configRoute(path: string, PageClass: typeof Page) {
     const $pages = $(".pages")
 
     page(path, function(context) {
+        console.log("page path: " + path)
         const key = removeLeadingSlash(context.path)
 
         const lastKey = $(".pages-switches .page-switch.current").attr("key")

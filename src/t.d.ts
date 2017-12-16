@@ -57,6 +57,11 @@ declare const ST: {
     Text: STFunc;
     TextArea: STFunc;
     Time: STFunc;
+    ListMetaPage: STFunc;
+    EditMetaPage: STFunc;
+    MongoIndexItem: STFunc;
+    MySQLIndexItem: STFunc;
+    FieldMetaRow: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -110,6 +115,9 @@ interface FieldMeta {
 
 interface EntityMeta {
     name: string
+    label: string
+    system: boolean
+    displayGroup: string
     digestFields?: string
     editEnhanceFunc?: string
     fields: {[fieldName: string]: FieldMeta}
@@ -137,3 +145,7 @@ interface UploadResult {
 type UploadCallback = (r: UploadResult[] | null) => void
 
 declare const wangEditor: any
+
+interface MetaStore {
+    entities: {[entityName: string]: EntityMeta}
+}
