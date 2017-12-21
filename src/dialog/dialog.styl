@@ -1,0 +1,67 @@
+@import "../mixin"
+
+.dialog-overlay
+    fixed(0, 0, 0, 0)
+    z-index dialogZ
+    background rgba(#aaa, 0)
+
+    .dialog
+        absolute(15%, auto, auto, 10%)
+        width 80%
+        height 70%
+        overflow hidden
+        background #fff
+        border-radius 4px
+        box-shadow 2px 2px 16px rgba(#888, .6)
+        transition 0.4s all
+
+        &.expand
+            top 0
+            left 0
+            right 0
+            bottom 0
+            width 100%
+            height 100%
+
+    .dialog-header
+        absolute(0, 0, auto, 0)
+        z-index 100
+        hh(dialogHeaderHeight)
+        border-bottom 1px solid cBorder
+        text-align center
+        background #fff
+
+        .dialog-expand, .dialog-close-btn
+            display block
+            absolute(0, 0, 0, auto)
+            width dialogHeaderHeight
+            text-align center
+            text-decoration none
+            color cBlue
+
+            &:hover
+                background cBlue
+                color #fff
+
+        .dialog-expand
+            absolute(0, auto, 0, 0)
+
+    .dialog-footer
+        absolute(auto, 0, 0, 0)
+        z-index 100
+        hh(dialogFooterHeight)
+        border-top 1px solid cBorder
+        background #fff
+        text-align center
+        
+        .btn
+            display block
+            width 120px
+            hh(30px)
+            margin ((dialogFooterHeight - 30px) / 2) auto
+
+    .dialog-content
+        padding ((20px + dialogHeaderHeight) 32px (20px + dialogFooterHeight) 32px)
+        box-sizing border-box
+        height 100%
+        overflow auto

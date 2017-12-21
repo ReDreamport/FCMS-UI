@@ -1,0 +1,11 @@
+mixin Field(name, label, tip, width, extraClass)
+    - var w = width || 1
+    .field(field-name=name, class=(extraClass || "") + " w" + w)
+        .label=label
+        block
+        .tip=tip
+
+mixin Select(options, value, extraClass)
+    select(class=extraClass)
+        each o in options
+            option(value=o[0], selected=o[0]===value)=o[1]

@@ -1,10 +1,31 @@
 
 // cSpell:words
 
+import $ = require("jquery")
 import moment = require("moment")
 
 const SYSTEM_FIELDS = ["_id", "_version", "_createdOn", "_createdBy",
     "_modifiedOn", "_modifiedBy"]
+
+export const FIELD_TYPES = ["String", "Password", "Boolean",
+    "Int", "Float", "Date", "Time", "DateTime", "Image", "File",
+    "Component", "Reference", "Object", "ObjectId"]
+
+export function stringArrayToOptionArray(strings: string[]) {
+    const options = []
+    for (const str of strings) {
+        options.push([str, str])
+    }
+    return options
+}
+
+export function replaceSelectOptionsByStringArray($select: JQuery,
+    strings: string[]) {
+    $select.empty()
+    for (const str of strings) {
+        $("<option>", {value: str, html: str}).appendTo($select)
+    }
+}
 
 export function cloneByJSON(source: any) {
     return JSON.parse(JSON.stringify(source))
@@ -84,4 +105,21 @@ export function getListFieldNames(fields: {[fn: string]: FieldMeta}) {
     }
 
     return names
+}
+
+// 每个字段由 field-name 标识
+export function collectInputByFieldName($form: JQuery, fieldClass?: string) {
+    const $fields = $form.find(fieldClass || ".field")
+    const inputData: {[n: string]: any} = {}
+
+    $fields.iterate($f => {
+        if ($f.hasClass("no-auto-collect")) return
+
+        const fieldName = $f.attr("field-name")
+        if (!fieldName) return
+        const $input = $f.find(":input")
+        inputData[fieldName] = $input.typedInput()
+    })
+
+    return inputData
 }

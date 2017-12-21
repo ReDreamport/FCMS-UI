@@ -3,6 +3,12 @@
 a
     color cBlue
 
+.align-left
+    text-align left
+
+.align-center
+    text-align center
+
 .btn
     box-sizing border-box
     display inline-block
@@ -58,8 +64,94 @@ input[type="radio"]
     hh(inputHeight)
     vertical-align middle
     
-table.simple
+table
+    &.for-input
+        th, td
+            padding 1px 2px
+            text-align center
+    &.fix-100
+        table-layout fixed
+        width 100%
+
     th, td
-        padding 8px 12px
+        text-align left
+        padding 6px 8px
         border-top 1px solid cTableBorder
         border-bottom 1px solid cTableBorder
+        textOverflow()
+        color cTableText
+
+    th
+        color cLabel
+        font-weight 400
+        hh(24px)
+
+    input[type="text"]
+    input[type="password"]
+    input[type="number"]
+    select
+    .btn
+        hh(24px)
+
+    .btn
+        margin-right 4px
+        padding 0 8px
+        border 0
+
+.mc-form
+    ONE_WIDTH = 160px
+    
+    font-size 13px
+
+    .field
+        display inline-block
+        vertical-align top
+        padding 0 8px 8px 0
+
+        &.w1
+            width ONE_WIDTH
+        &.w2
+            width (2 * ONE_WIDTH)
+        &.w3
+            width (3 * ONE_WIDTH)
+        &.w4
+            width (4 * ONE_WIDTH)
+        &.wp100
+            display block
+            width auto
+
+        >.label
+            color cLabel
+            hh(28px)
+            textOverflow()
+
+        input[type="text"]
+        input[type="password"]
+        input[type="number"]
+        select
+            box-sizing border-box
+            width 100%
+
+        .field-actions
+            margin-bottom 6px
+            
+            .btn
+                font-size 12px
+                padding 0 8px
+                hh(24px)
+                box-shadow none
+
+        .tip
+            padding 6px 0px 0px 4px
+            font-size 12px
+            color cWeakText
+                
+    .section
+        margin-bottom 16px
+
+    .section-title
+        font-size 15px
+        hh(36px)
+        color cRed
+        border-bottom 1px solid cBorder
+        margin-bottom 8px    

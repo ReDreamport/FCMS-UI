@@ -1,16 +1,16 @@
 tr
     td
         a.remove-row.btn(href="javascript:") 删除
-    td
-        input(type="text", field="name")
-    td
-        input(type="text", field="fields")
-    td
-        input(type="checkbox", field="unique")
-    td
-        select(field="indexType")
+    td(field-name="name")
+        input(type="text")
+    td(field-name="fields")
+        input(type="text")
+    td(field-name="unique")
+        input(type="checkbox")
+    td(field-name="indexType")
+        select
             - var options = [{name: "BTREE", label: "BTREE"}, {name: "HASH", label: "HASH"}, {name: "RTREE", label: "RTREE"}]
             each o in options
                 option(value=o.name)=o.label
-    td
-        input(type="text", field="errorMessage")
+    td(field-name="errorMessage")
+        input(type="text")

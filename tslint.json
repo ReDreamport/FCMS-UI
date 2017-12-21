@@ -21,7 +21,6 @@
         "only-arrow-functions": false,
         "prefer-for-of": true,
         "promise-function-async": false,
-        // "typedef": false,
         "typedef-whitespace": [
             true,
             {
@@ -41,10 +40,8 @@
           ],
         "unified-signatures": true,
         "await-promise": true,
-        // "ban": [ true, "eval" ],
         "curly": false,
         "forin": false,
-        // "import-blacklist": true,
         "no-conditional-assignment": true,
         "no-console": false,
         "no-construct": true,
@@ -73,7 +70,6 @@
         "no-unused-variable": true,
         "no-use-before-declare": true,
         "no-var-keyword": true,
-        "prefer-conditional-expression": [true, "check-else-if"],
         "prefer-object-spread": true,
         "radix": true,
         "restrict-plus-operands": false,

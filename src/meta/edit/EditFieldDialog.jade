@@ -1,0 +1,65 @@
+include ../../mixin
+
+.dialog-overlay
+    .dialog
+        .dialog-header
+            span 编辑字段
+            a.dialog-expand.iconfont.icon-expand(href="javascript:")
+            a.dialog-close-btn.iconfont.icon-close(href="javascript:")
+        .dialog-content
+            .mc-form
+                .section
+                    .section-title 核心
+                    .row
+                        +Field("name", "名字")
+                            input(type="text", value=fieldMeta.name)
+                        +Field("label", "显示名")
+                            input(type="text", value=fieldMeta.label)
+                        +Field("type", "类型")
+                            +Select(fieldTypesOptions, fieldMeta.type, "for-type")
+                        +Field("refEntity", "关联实体")
+                            +Select(entityOptions, fieldMeta.refEntity)
+                        +Field("multiple", "多值的")
+                            input(type="checkbox", checked=fieldMeta.multiple)
+                    .row
+                        +Field("comment", "开发备注", "", "p100")
+                            input(type="text", value=fieldMeta.comment)
+                .section
+                    .section-title 显示
+                    .row
+                        +Field("inputType", "输入方式")
+                            +Select([], fieldMeta.inputType, "for-input-type")
+                        +Field("fastFilter", "快速搜索")
+                            input(type="checkbox", checked=fieldMeta.fastFilter)
+                        +Field("showInListPage", "列表界面显示")
+                            input(type="checkbox", checked=fieldMeta.showInListPage)
+                        +Field("hideInCreatePage", "创建界面隐藏")
+                            input(type="checkbox", checked=fieldMeta.hideInCreatePage)
+                        +Field("inEditPage", "编辑界面")
+                            +Select([["edit", "可编辑"], ["readonly", "只读"], ["hide", "不显示"]], fieldMeta.inEditPage)
+                    .row
+                        +Field("userGuide", "使用说明", "", "p100")
+                            input(type="text", value=fieldMeta.userGuide)
+                .section
+                    .section-title 存储
+                    .row
+                        +Field("persistType", "持久化类型")
+                            +Select([], fieldMeta.persistType, "for-persist-type")
+                        +Field("sqlColM", "SQL列宽")
+                            input(type="number", value=fieldMeta.sqlColM)
+                        +Field("fileStoreDir", "文件存储目录")
+                            input(type="text", value=fieldMeta.fileStoreDir)
+
+        .dialog-footer
+            a.finish.btn(href="javascript:") 确定
+
+//- noCreate?: boolean
+//- noEdit?: boolean
+//- options?: NameLabelOption[]
+//- optionsDependOnField?: string
+//- optionsFunc?: string
+//- ?: string
+//- asFastFilter?: boolean
+//- inputFunc?: string
+//- editReadonly?: boolean
+//- notShow?: boolean

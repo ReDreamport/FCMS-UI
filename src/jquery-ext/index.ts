@@ -26,6 +26,27 @@ export function extend() {
             const v = this.val()
             return v
         },
+        typedInput(): any {
+            if (!this.length) return null
+            if (this.is("input")) {
+                const type = this.attr("type")
+                if (type === "checkbox") {
+                    return this.prop("checked")
+                } else if (type === "number") {
+                    return this.floatInput(0)
+                } else {
+                    return this.stringInput()
+                }
+            } else if (this.is("select")) {
+                // const $selected = this.find("option:selected")
+                // if ($selected.length) {
+                //     return $selected.attr("value")
+                // } else {
+                //     return this.find("option:first").attr("value")
+                // }
+                return this.val()
+            }
+        },
         isChecked(): boolean {
             if (this.length !== 1)
                 throw new Error("NotSingleNode"  + this.attr("class"))

@@ -1,10 +1,10 @@
 tr(field-name=name)
-    td
+    td.align-center
         a.edit-field.btn(href="javascript:") 编辑
-        a.remove-row.btn(href="javascript:") 删除
+        a.remove-field.btn(href="javascript:") 删除
     td=name
     td=label
     td=type
     td=refEntity
-    td=multiple
-    td=fastSearch
+    td.align-center=multiple?"多":""
+    td.align-center=fastSearch?"快":""

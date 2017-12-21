@@ -12,6 +12,7 @@ interface JQuery {
     iterate: (func: ((j: JQuery, index: number) => any)) => void
     widthOr0: () => number
     heightOr0: () => number
+    typedInput: () => any
 }
 
 type STFunc = (context?: any) => string
@@ -62,6 +63,7 @@ declare const ST: {
     MongoIndexItem: STFunc;
     MySQLIndexItem: STFunc;
     FieldMetaRow: STFunc;
+    EditFieldDialog: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -99,6 +101,7 @@ interface FieldMeta {
     name: string
     type: string
     inputType: string
+    persistType: string
     multiple: boolean
     options: any[]
     refEntity: string
@@ -120,6 +123,9 @@ interface EntityMeta {
     displayGroup: string
     digestFields?: string
     editEnhanceFunc?: string
+    db: string
+    mongoIndexes: any[]
+    mysqlIndexes: any[]
     fields: {[fieldName: string]: FieldMeta}
 }
 

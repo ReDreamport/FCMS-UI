@@ -106,14 +106,13 @@ gulp.task("hash", function() {
         .pipe(gulp.dest("./build"))
 })
 
-gulp.task("ts-hash", function(cb) { sequence("ts", "hash")(cb) })
+gulp.task("ts-tslint-hash", function(cb) { sequence("tslint", "ts", "hash")(cb) })
 gulp.task("stylus-hash", function(cb) { sequence("stylus", "hash")(cb) })
 gulp.task("template-hash", function(cb) { sequence("template", "hash")(cb) })
 gulp.task("index-hash", function(cb) { sequence("index", "hash")(cb) })
 
 gulp.task("watch", ["default"], function () {
-    gulp.watch('src/**/*.ts', ["tslint"])
-    gulp.watch('src/**/*.ts', ["ts-hash"])
+    gulp.watch('src/**/*.ts', ["ts-tslint-hash"])
     gulp.watch('src/**/*.jade', ["template-hash"])
     gulp.watch('src/**/*.styl', ["stylus-hash"])
     gulp.watch('src/**/*.jade', ["index-hash"])

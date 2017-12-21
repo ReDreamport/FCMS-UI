@@ -1,13 +1,14 @@
 tr
     td
         a.remove-row.btn(href="javascript:") 删除
-    td
-        input(type="text", field="name")
-    td
-        input(type="text", field="fields")
-    td
-        input(type="checkbox", field="unique")
-    td
-        input(type="checkbox", field="sparse")
-    td
-        input(type="text", field="errorMessage")
+    td(field-name="name")
+        input(type="text", value=name)
+    td(field-name="fields")
+        - var fstr = fields && fields.map(f=>`${f.order}${f.field}`).join("")
+        input(type="text", value=fstr)
+    td(field-name="unique")
+        input(type="checkbox", checked=unique)
+    td(field-name="sparse")
+        input(type="checkbox", checked=sparse)
+    td(field-name="errorMessage")
+        input(type="text", value=errorMessage)
