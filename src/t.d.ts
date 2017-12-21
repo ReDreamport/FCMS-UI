@@ -120,12 +120,13 @@ interface EntityMeta {
     name: string
     label: string
     system: boolean
-    displayGroup: string
+    displayGroup?: string
     digestFields?: string
     editEnhanceFunc?: string
     db: string
-    mongoIndexes: any[]
-    mysqlIndexes: any[]
+    dbName: string
+    mongoIndexes?: any[]
+    mysqlIndexes?: any[]
     fields: {[fieldName: string]: FieldMeta}
 }
 

@@ -5,21 +5,18 @@ import { alertAjaxIfError, api } from "../../api"
 import { cloneByJSON, collectInputByFieldName } from "../../common"
 import { getMeta } from "../../globals"
 import { Page } from "../../page"
+import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
 import { editFieldMeta } from "./edit-field"
-export class EditMeta extends Page {
-    private entityName: string
-    private entityMeta: EntityMeta
+
+export class CreateEditMeta extends Page {
+    protected entityName: string
+    protected entityMeta: EntityMeta
 
     private $page: JQuery
     private $tbodyFields: JQuery
 
     pBuild() {
-        this.entityName = this.routeCtx.params.entityName
-        this.entityMeta = getMeta().entities[this.entityName]
-
-        this.setTitle(this.entityName)
-
         this.$page = $(ST.EditMetaPage({entityMeta: this.entityMeta}))
             .appendTo(this.$pageParent)
         this.$tbodyFields = this.$page.mustFindOne("tbody.fields")
@@ -132,6 +129,7 @@ export class EditMeta extends Page {
         const q = api.put(`meta/entity/${newEntityMeta.name}`, newEntityMeta)
         alertAjaxIfError(q).then(() => {
             toastSuccess("保存成功!")
+            closeByKey(this.routeCtx.path)
             $(".page.page-list-meta .refresh-list").click()
         })
     }
@@ -153,6 +151,10 @@ export class EditMeta extends Page {
 
         const $mainForm = this.$page.mustFindOne(".entity-form.mc-form")
         const em = collectInputByFieldName($mainForm)
+
+        if (!em.name) throw new Error("实体名必填")
+        if (!em.label) throw new Error("显示名必填")
+        em.tableName = em.tableName || em.name
 
         if (em.digestFields) {
             const fields = em.digestFields.split("|")
@@ -186,8 +188,26 @@ export class EditMeta extends Page {
     }
 }
 
-export class CreateMeta extends Page {
+export class EditMeta extends CreateEditMeta {
+    pBuild() {
+        this.entityName = this.routeCtx.params.entityName
+        this.entityMeta = getMeta().entities[this.entityName]
 
+        this.setTitle(this.entityName)
+
+        return super.pBuild()
+    }
+}
+export class CreateMeta extends CreateEditMeta {
+    pBuild() {
+        this.entityName = ""
+        this.entityMeta = {system: false, name: "", label: "",
+            db: "mongodb", dbName: "main", fields: {}}
+
+        this.setTitle("新建实体")
+
+        return super.pBuild()
+    }
 }
 
 function parseIndexFields(fieldsString: string, entityMeta: EntityMeta) {

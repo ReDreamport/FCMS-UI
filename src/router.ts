@@ -17,7 +17,7 @@ export function initRouter() {
 
     PageClasses["/meta"] = ListMeta
     PageClasses["/meta/entity/:entityName"] = EditMeta
-    PageClasses["/meta/entity"] = CreateMeta
+    PageClasses["/meta/entity-add"] = CreateMeta
 
     PageClasses["*"] = NotFoundPage
 
@@ -95,6 +95,8 @@ function doHidePage(p: Page) {
 }
 
 export function closeByKey(key: string) {
+    key = removeLeadingSlash(key)
+
     const p = opens[key]
     if (!p) return
 
@@ -105,7 +107,7 @@ export function closeByKey(key: string) {
     const idx = openOrders.indexOf(key)
     if (idx >= 0) openOrders.splice(idx, 1)
     if (openOrders.length) {
-        page(openOrders[openOrders.length - 1])
+        page("/" + openOrders[openOrders.length - 1])
     } else {
         page("/")
     }
