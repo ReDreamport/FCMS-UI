@@ -4,7 +4,7 @@
 import $ = require("jquery")
 import page = require("page")
 import { ListEntity } from "./entity/list"
-import { CreateMeta, EditMeta } from "./meta/edit/index"
+import { CreateMeta, EditMeta } from "./meta/edit"
 import { ListMeta } from "./meta/list"
 import { NotFoundPage, Page } from "./Page"
 
@@ -13,11 +13,11 @@ const opens: { [s: string]: Page } = {}
 const openOrders: string[] = []
 
 export function initRouter() {
-    PageClasses["/list/:entityName"] = ListEntity
-
     PageClasses["/meta"] = ListMeta
     PageClasses["/meta/entity/:entityName"] = EditMeta
     PageClasses["/meta/entity-add"] = CreateMeta
+
+    PageClasses["/list/:entityName"] = ListEntity
 
     PageClasses["*"] = NotFoundPage
 

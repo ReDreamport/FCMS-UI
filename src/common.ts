@@ -123,3 +123,16 @@ export function collectInputByFieldName($form: JQuery, fieldClass?: string) {
 
     return inputData
 }
+
+export function isEnterKey(e: JQuery.Event) {
+    return e.keyCode === JQuery.Key.Enter
+}
+
+export function onEnterKeyOrChange($input: JQuery,
+    callback: (e: JQuery.Event) => void) {
+    $input.keyup(e => {
+        if (isEnterKey(e)) callback(e)
+    })
+
+    $input.change(callback)
+}

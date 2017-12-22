@@ -1,0 +1,47 @@
+tbody
+    each item in page
+        tr
+            td.align-center
+                input.check-row(type="checkbox")
+            td.align-center
+                a.view-entity.btn(href=`#!/view/${entityName}${item._id}`) 详情
+                a.edit-entity.btn(href=`#!/edit/${entityName}${item._id}`) 编辑
+            each fn in listFieldNames
+                - var fieldMeta = entityMeta.fields[fn]
+                - var fieldValue = item[fn]
+                td(style=JC.getColumnStyle(fieldMeta))
+                    // 多值字段不显示
+                    // 富文本不显示
+                    if fieldMeta.multiple 
+                        | ...
+                    else if fieldMeta.inputType === "RichText"
+                        | ... 
+                    else
+                        // TODO input type == select
+                        case fieldMeta.type
+                            when 'Object'
+                            when 'Component'
+                                | ...
+                            when 'Date'
+                                | #{JC.formatDate(fieldValue, "YY-MM-DD")}
+                            when 'Time'
+                                | #{JC.formatDate(fieldValue, "HH:mm:ss")}
+                            when 'DateTime'
+                                | #{JC.formatDate(fieldValue, "YY-MM-DD HH:mm:ss")}
+                            when 'Boolean'
+                                if fieldValue === true
+                                    i.iconfont.icon-correct
+                            when 'File'
+                                - var path = JC.fileObjectToLink(fieldValue)
+                                if path
+                                    a(href=path, target="_blank") 下载
+                            when 'Image'
+                                - var path = JC.fileObjectToLink(fieldValue)
+                                if path
+                                    img.resource(src=path)
+                            when 'Reference'
+                                if fieldValue
+                                    a.loading-ref(href=`#!/view/${fieldMeta.refEntity}${fieldValue}`,
+                                        entityName=fieldMeta.refEntity, id=fieldValue)=JC.digestId(fieldValue)
+                            default
+                                span!=fieldValue

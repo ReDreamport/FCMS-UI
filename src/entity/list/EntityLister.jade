@@ -1,0 +1,29 @@
+.entity-lister
+    .paging-parent
+        input.fast-search(type="text", placeholder="快速搜索")
+        span 第
+        input.page-no(type="number", value="1")
+        span 页/共
+        .page-num 0
+        span 页&nbsp;每页
+        input.page-size(type="number", value="20")
+        span 项&nbsp;共
+        .total 0
+        span 项
+        a.prev-page.btn(href="javascript:") 上一页
+        a.next-page.btn(href="javascript:") 下一页
+        a.more-filter.btn.btn-border.iconfont.icon-filter(href="javascript:")
+        a.refresh-list.btn.btn-border.iconfont.icon-refresh(href="javascript:")
+    .list-parent
+        table.fix
+            thead
+                tr
+                    th.align-center(style="width: 30px;")
+                        input.check-all(type="checkbox")
+                    th.align-center(style="width: 120px;")
+                    each fn in listFieldNames
+                        - var fieldMeta = entityMeta.fields[fn]
+                        th(style=JC.getColumnStyle(fieldMeta))=fieldMeta.label
+            tbody
+
+        

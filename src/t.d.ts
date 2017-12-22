@@ -18,7 +18,20 @@ interface JQuery {
 type STFunc = (context?: any) => string
 
 declare const ST: {
+    ListMetaPage: STFunc;
+    EditMetaPage: STFunc;
+    MongoIndexItem: STFunc;
+    MySQLIndexItem: STFunc;
+    FieldMetaRow: STFunc;
+    EditFieldDialog: STFunc;
+    //
+    EntityLister: STFunc;
+    ListEntityPage: STFunc;
+    EntityListTbody: STFunc;
+    //
+    PageSwitch: STFunc;
     MenuItems: STFunc;
+    //
     ListEntity: STFunc;
     ListEntityTable: STFunc;
     ListEntityTbody: STFunc;
@@ -28,7 +41,6 @@ declare const ST: {
     FilterItem: STFunc;
     FilterOperatorOption: STFunc;
     FilterInput: STFunc;
-    PageSwitch: STFunc;
     ViewEntity: STFunc;
     ViewEntityFields: STFunc;
     EditEntity: STFunc;
@@ -58,12 +70,6 @@ declare const ST: {
     Text: STFunc;
     TextArea: STFunc;
     Time: STFunc;
-    ListMetaPage: STFunc;
-    EditMetaPage: STFunc;
-    MongoIndexItem: STFunc;
-    MySQLIndexItem: STFunc;
-    FieldMetaRow: STFunc;
-    EditFieldDialog: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -79,6 +85,9 @@ interface ListResult {
 interface User {
     _id: string
     username: string
+    nickname?: string
+    phone?: string
+    email?: string
     acl: any
     roles?: any
     admin: boolean
@@ -100,11 +109,12 @@ interface EntityValue {
 interface FieldMeta {
     name: string
     type: string
+    refEntity: string
     inputType: string
     persistType: string
     multiple: boolean
+    fastSearch: boolean
     options: any[]
-    refEntity: string
     hideInListPage: boolean
     notShow: boolean
     noCreate: boolean

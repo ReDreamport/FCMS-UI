@@ -7,18 +7,21 @@ html
         meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0")
 
         link(rel="stylesheet", href="lib/normalize.css")
-        link(rel="stylesheet", href="//at.alicdn.com/t/font_241125_r4uowfl8p6kzkt9.css")
+        link(rel="stylesheet", href="//at.alicdn.com/t/font_241125_rpzgmgu0sn12a9k9.css")
         link(rel="stylesheet", href="app.css")
 
     body
+        .main-menu-bar-parent
+            .user-area.btn.btn-red
+                .iconfont.icon-user
+                .site-username
+                a.exit-site.iconfont.icon-logout(href="javascript:")
+                
+            .main-menu-bar
         .main-header
             a.main-menu-btn.iconfont.icon-menu2(href="javascript:")
             .pages-switches
-            a.main-settings.iconfont.icon-settings(href="javascript:")
-
-        .main-body
-            .main-menu-bar
-            .pages
+        .pages
 
         .toast-box
 

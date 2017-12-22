@@ -3,9 +3,9 @@
 import $ = require("jquery")
 
 import { api } from "./api"
-import { formatDate, isSortableField, uniqueId } from "./common"
-import { digestEntity, digestId, ensureValueIsArray, hasEntityPermission,
-    isSystemFieldName, optionsArrayToMap, tdStyleOfField } from "./entity"
+import { fileObjectToLink, formatDate, isSortableField,
+    uniqueId } from "./common"
+import { digestId, getColumnStyle } from "./entity"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
 import { pInitMenu } from "./menu"
@@ -31,6 +31,8 @@ function pPing() {
     const q = api.get("ping")
     return q.then(function(user: User) {
         setUser(user)
+        $(".site-username").html(user.nickname
+            || user.phone || user.email || user.username)
     })
 }
 
@@ -43,17 +45,13 @@ function pFetchMeta() {
 
 function initJadeContext() {
     (window as any).JC = {
-        hasEntityPermission,
-        tdStyleOfField,
-        isSystemFieldName,
-        optionsArrayToMap,
-        ensureValueIsArray,
         formatDate,
         getMeta,
-        digestEntity,
-        digestId,
         isSortableField,
-        uniqueId
+        uniqueId,
+        getColumnStyle,
+        fileObjectToLink,
+        digestId
     }
 }
 
@@ -68,6 +66,18 @@ function initEvents() {
         e.preventDefault()
         const key = $(this).closest(".page-switch").mustAttr("key")
         closeByKey(key)
+    })
+
+    $("body").on("click", "tbody tr", function() {
+        const $this = $(this)
+        $this.closest("table").find("tr").removeClass("current")
+        $this.addClass("current")
+    })
+
+    $(".exit-site").click(function() {
+        if (!confirm("确定要退出系统吗？")) return
+        const here = encodeURIComponent(location.href)
+        location.href = `/api/sso/client/sign-out?callback=${here}`
     })
 }
 

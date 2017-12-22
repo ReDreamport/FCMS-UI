@@ -5,7 +5,7 @@ html, body
 
 ::-webkit-scrollbar
     width 10px
-    height 12px
+    height 18px
 
 ::-webkit-scrollbar-thumb
     height 6px
@@ -23,33 +23,67 @@ html, body
 ::-webkit-scrollbar-corner
     background-color transparent
 
+.main-menu-bar-parent
+    absolute(0, auto, 0, 0)
+    box-sizing border-box
+    width menuBarLeft
+    border-right 1px solid borderColor
+    overflow auto
+
+    >.user-area
+        position relative
+        display block
+        margin 8px 8px
+        padding 0
+        width auto
+        textOverflow()
+
+        .iconfont, .site-username
+            display block
+            font-size 13px
+            text-decoration none
+
+        .icon-user
+            absolute(0, auto, 0, 0)
+            z-index 1
+            width 28px
+            text-align center
+
+        .site-username
+            padding 0 32px 0 32px
+            position relative
+            top -1px
+            
+        .exit-site
+            absolute(0, 0, 0, auto)
+            z-index 1
+            width 28px
+            border-left 1px solid cBorderRed
+            color cRed
+            text-align center
+
+
 .main-header
     headerBtnWidth = 48px
 
-    fixed(0, 0, auto, 0)
+    fixed(0, 0, auto, menuBarLeft)
     hh(siteHeaderHeight)
     border-bottom 1px solid cBorder
     background #fff
     z-index 100
 
-    .main-menu-btn, .main-settings
+    .main-menu-btn
         absolute(0, auto, 0, auto)
         display block
         text-align center
         width headerBtnWidth
         text-decoration none
         color cBlue
-
-    .main-menu-btn
         left 0
         border-right 1px solid cBorder
 
-    .main-settings
-        right 0
-        border-left 1px solid cBorder
-
     .pages-switches
-        absolute(0, headerBtnWidth, 0, headerBtnWidth)
+        absolute(0, 0, 0, headerBtnWidth)
         z-index 50
         padding 0 6px
         overflow hidden
@@ -89,27 +123,18 @@ html, body
             color #fff
             background cBlue
 
-.main-body
-    position relative
+.pages
+    absolute(0, 0, 0, menuBarLeft)
     box-sizing border-box
     height 100%
     padding-top siteHeaderHeight
-
-    .main-menu-bar
-        absolute(siteHeaderHeight, auto, 0, 0)
-        box-sizing border-box
-        width menuBarLeft
-        border-right 1px solid borderColor
-    
-    >.pages
-        absolute(siteHeaderHeight, 0, 0, menuBarLeft)
 
     .page-parent
         height 100%
         overflow auto
 
         .view, .page
-            padding 32px
+            padding 24px
 
             .page-top-actions
                 margin-bottom 32px

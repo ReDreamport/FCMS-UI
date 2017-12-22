@@ -29,8 +29,8 @@ include ../../mixin
                     .row
                         +Field("inputType", "输入方式")
                             +Select([], fieldMeta.inputType, "for-input-type")
-                        +Field("fastFilter", "快速搜索")
-                            input(type="checkbox", checked=fieldMeta.fastFilter)
+                        +Field("fastSearch", "快速搜索")
+                            input(type="checkbox", checked=fieldMeta.fastSearch)
                         +Field("showInListPage", "列表界面显示")
                             input(type="checkbox", checked=fieldMeta.showInListPage)
                         +Field("hideInCreatePage", "创建界面隐藏")
