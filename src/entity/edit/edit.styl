@@ -4,6 +4,7 @@
     .multiple-input
         .multiple-input-item
             removeBtnWidth = 24px
+            moveHandleWidth = 24px
 
             display inline-block
             vertical-align top
@@ -12,13 +13,24 @@
 
             .field-input-parent
                 display inline-block
-                width (fieldWidthOne - removeBtnWidth)
+                width (fieldWidthOne - removeBtnWidth - moveHandleWidth)
                 vertical-align middle
 
-            .remove-m-input-item
+            .remove-m-input-item, .move-handle
                 display inline-block
+                vertical-align top
                 hh(inputHeight)
                 width removeBtnWidth
                 text-align center
                 text-decoration none
-                vertical-align middle
+                color cBlue
+
+            .move-handle
+                width moveHandleWidth
+                
+                &:hover
+                    cursor move
+                    color cGreen
+
+            .remove-m-input-item
+                width removeBtnWidth

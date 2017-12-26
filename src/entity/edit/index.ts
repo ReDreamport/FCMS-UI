@@ -1,20 +1,21 @@
+// cSpell:words sortablejs
+
 import { alertAjaxIfError, api } from "../../api"
 import { makeSureArray, SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
 import { Page } from "../../page"
 import { digestId } from "../index"
 
-import $ = require("jquery")
+import * as $ from "jquery"
 import _ = require("lodash")
-
+import Sortable = require("sortablejs")
 
 class EntityEditForm {
     private $root: JQuery
 
     private singleSimpleFieldNames: string[] = []
     private multipleSimpleFieldNames: string[] = []
-    // 一行一个 object, rich text, text area CheckList
-    private oneRowFieldNames: string[] = []
+    private bigInputFieldNames: string[] = []
     private fileFieldNames: string[] = []
     private imageFieldNames: string[] = []
     private componentFieldNames: string[] = []
@@ -50,11 +51,11 @@ class EntityEditForm {
             } else if (type === "Image") {
                 this.imageFieldNames.push(fieldName)
             } else if (type === "Object") {
-                this.oneRowFieldNames.push(fieldName)
+                this.bigInputFieldNames.push(fieldName)
             } else if (inputType === "RichText" || inputType === "TextArea") {
-                this.oneRowFieldNames.push(fieldName)
+                this.bigInputFieldNames.push(fieldName)
             } else if (inputType === "CheckList") {
-                this.oneRowFieldNames.push(fieldName)
+                this.bigInputFieldNames.push(fieldName)
             } else if (fieldMeta.multiple) {
                 this.multipleSimpleFieldNames.push(fieldName)
             } else {
@@ -82,23 +83,31 @@ class EntityEditForm {
                 .appendTo($section)
             const $multipleInput = $field.mustFindOne(".multiple-input:first")
             const fv = makeSureArray(this.entityInitValue[fn])
+            // 多值，初始值
             if (fv) {
                 for (const item of fv) {
                     $multipleInput.append(ST.MultipleSimpleInputItem({fm,
                         fv: item}))
                 }
             }
+            // 多值，添加一项
             $field.mustFindOne(".label-actions:first .add").click(() => {
                 $multipleInput.append(ST.MultipleSimpleInputItem({fm,
                     fv: null}))
+
             })
+            // 排序使能
+            Sortable.create($multipleInput[0], {handle: ".move-handle",
+                animation: 600})
         }
 
+        // 多值，清空
         $section.on("click", ".label-actions:first .empty", e => {
             $(e.target).mustClosest(".field")
                 .mustFindOne(".multiple-input:first").empty()
         })
 
+        // 多值，删除一项
         $section.on("click", ".remove-m-input-item", e => {
             $(e.target).mustClosest(".multiple-input-item").remove()
         })
