@@ -3,6 +3,7 @@
 
 import $ = require("jquery")
 import page = require("page")
+import { EditEntity } from "./entity/edit"
 import { ListEntity } from "./entity/list"
 import { CreateMeta, EditMeta } from "./meta/edit"
 import { ListMeta } from "./meta/list"
@@ -18,6 +19,7 @@ export function initRouter() {
     PageClasses["/meta/entity-add"] = CreateMeta
 
     PageClasses["/list/:entityName"] = ListEntity
+    PageClasses["/edit/:entityName/:id"] = EditEntity
 
     PageClasses["*"] = NotFoundPage
 
@@ -126,6 +128,6 @@ function adjustPageSwitchWidth() {
     // 差值都被 title 吸收
     let newTitleWidth = $firstItem.find(".title").widthOr0()
         + newItemOuterWidth - oldItemOuterWidth
-    if (newTitleWidth > 80) newTitleWidth = 80
+    if (newTitleWidth > 120) newTitleWidth = 120
     $parent.find(".title").width(newTitleWidth)
 }

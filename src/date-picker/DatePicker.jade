@@ -1,0 +1,51 @@
+.data-picker-overlay
+    .date-picker-box
+        if type === "Date" || type === "DateTime"
+            .year-month
+                select.select-year
+                    - var y = startYear
+                    while y < endYear
+                        option(value=y selected=y===oldYear)=y
+                        - y++
+                select.select-month
+                    each m in [1,2,3,4,5,6,7,8,9,10,11,12]
+                        option(value=m-1 selected=m-1===oldMonth)=m
+
+                a.prev-month(href="javascript:") 上个月
+                a.next-month(href="javascript:") 下个月
+
+            table
+                thread
+                    th 一
+                    th 二
+                    th 三
+                    th 四
+                    th 五
+                    th 六
+                    th 日
+                tbody.date
+
+        if type === "Time" || type === "DateTime"
+            .time-area
+                select.select-hour
+                    - var h = 0
+                    while h < 24
+                        option(value=h selected=h===oldHour)=h
+                        - h++
+                span 时
+                select.select-minute
+                    - var m = 0
+                    while m < 60
+                        option(value=m selected=m===oldMinute)=m
+                        - m++
+                span 分
+                select.select-second
+                    - var s = 0
+                    while s < 60
+                        option(value=s selected=s===oldSecond)=s
+                        - s++
+                span 秒
+                
+        .picker-actions
+            a.confirm.btn(href="javascript:") 确定
+            a.cancel.btn(href="javascript:") 取消

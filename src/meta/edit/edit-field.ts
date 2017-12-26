@@ -60,7 +60,7 @@ const typeInputPersist = {
         mysql: ["varchar"]
     },
     Component: {
-        input: ["InlineComponent", "PopupComponent", "TabledComponent"],
+        input: ["InlineComponent", "PopupComponent"],
         mongodb: ["Document"],
         mysql: ["text", "blob"]
     },

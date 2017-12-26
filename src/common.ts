@@ -2,9 +2,10 @@
 // cSpell:words
 
 import $ = require("jquery")
+import _ = require("lodash")
 import moment = require("moment")
 
-const SYSTEM_FIELDS = ["_id", "_version", "_createdOn", "_createdBy",
+export const SYSTEM_FIELDS = ["_id", "_version", "_createdOn", "_createdBy",
     "_modifiedOn", "_modifiedBy"]
 
 export const FIELD_TYPES = ["String", "Password", "Boolean",
@@ -135,4 +136,10 @@ export function onEnterKeyOrChange($input: JQuery,
     })
 
     $input.change(callback)
+}
+
+export function makeSureArray(v: any) {
+    if (_.isNil(v)) return v
+    if (_.isArray(v)) return v
+    return [v]
 }

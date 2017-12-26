@@ -1,4 +1,3 @@
-import page = require("page")
 
 export class Page {
     constructor(public key: string,
@@ -37,12 +36,8 @@ export class Page {
 
 export class NotFoundPage extends Page {
     pBuild() {
-        console.log("Not found: " +  this.routeCtx.path)
- if (this.routeCtx.path[1] === "/") {
-            page.redirect(this.routeCtx.path.substring(1))
-        } else {
-            this.$pageParent
-                .append("<div class='page page-not-found'>内容不存在</div>")
-        }
+        console.log("Not found: " + this.routeCtx.path)
+        this.$pageParent
+            .append("<div class='page page-not-found'>内容不存在</div>")
     }
 }

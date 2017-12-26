@@ -199,10 +199,12 @@ export class EditMeta extends CreateEditMeta {
     }
 }
 export class CreateMeta extends CreateEditMeta {
+    pLoadData() {
+        const q = api.get("meta-empty")
+        return alertAjaxIfError(q).then(em => this.entityMeta = em)
+    }
     pBuild() {
         this.entityName = ""
-        this.entityMeta = {system: false, name: "", label: "",
-            db: "mongodb", dbName: "main", fields: {}}
 
         this.setTitle("新建实体")
 

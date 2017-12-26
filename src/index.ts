@@ -5,6 +5,7 @@ import $ = require("jquery")
 import { api } from "./api"
 import { fileObjectToLink, formatDate, isSortableField,
     uniqueId } from "./common"
+import { showDatePicker } from "./date-picker"
 import { digestId, getColumnStyle } from "./entity"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
@@ -72,6 +73,15 @@ function initEvents() {
         const $this = $(this)
         $this.closest("table").find("tr").removeClass("current")
         $this.addClass("current")
+    })
+
+    $("body").on("click", ".open-calendar", function() {
+        const $dp = $(this).closest(".date-picker")
+        const $input = $dp.mustFindOne("input")
+        const initValue = $input.stringInput()
+        showDatePicker($dp.mustAttr("type"), initValue, {}, (d, ds) => {
+            $input.val(ds)
+        })
     })
 
     $(".exit-site").click(function() {

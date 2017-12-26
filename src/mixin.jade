@@ -1,11 +1,57 @@
 mixin Field(name, label, tip, width, extraClass)
     - var w = width || 1
     .field(field-name=name, class=(extraClass || "") + " w" + w)
-        .label=label
-        block
+        .label-area
+            .label=label
+        if block
+            block
         .tip=tip
+
+mixin WField(name, label, tip, actions, extraClass)
+    .field.w-field(field-name=name, class=(extraClass || "") + " wp100")
+        .label-area
+            .label=label
+            .label-actions
+                if actions
+                    if actions.add
+                        a.add.btn.iconfont.icon-add(href="javascript:")
+                    if actions.edit
+                        a.edit.btn.iconfont.icon-edit(href="javascript:")
+                    if actions.empty
+                        a.empty.btn.iconfont.icon-delete2(href="javascript:")
+        .tip=tip
+        if block
+            block
 
 mixin Select(options, value, extraClass)
     select(class=extraClass)
         each o in options
             option(value=o[0], selected=o[0]===value)=o[1]
+
+mixin SimpleFieldInput(fm, fv)
+    .field-input-parent(ft=fm.type, fit=fm.inputType)
+        case fm.inputType
+            when "Text"
+                input(type="text", value=fv)
+            when "Password"
+                input(type="password", value="")
+            when "Select"
+                select
+            when "Check"
+                input(type="checkbox", checked=fv)
+            when "Int"
+                input(type="number", value=fv)
+            when "Float"
+                input(type="number", value=fv)
+            when "Date"
+                .date-picker(type="Date")
+                    input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "Time"
+                .date-picker(type="Time")
+                    input(type="text", value=JC.formatDate(fv, "HH:mm:ss"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "DateTime"
+                .date-picker(type="DateTime")
+                    input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD HH:mm:ss"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")

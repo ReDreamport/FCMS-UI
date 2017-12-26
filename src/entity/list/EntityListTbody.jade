@@ -4,8 +4,8 @@ tbody
             td.align-center
                 input.check-row(type="checkbox")
             td.align-center
-                a.view-entity.btn(href=`#!/view/${entityName}${item._id}`) 详情
-                a.edit-entity.btn(href=`#!/edit/${entityName}${item._id}`) 编辑
+                a.view-entity.btn(href="/#!view/#{entityName}/#{item._id}") 详情
+                a.edit-entity.btn(href="/#!edit/#{entityName}/#{item._id}") 编辑
             each fn in listFieldNames
                 - var fieldMeta = entityMeta.fields[fn]
                 - var fieldValue = item[fn]
@@ -41,7 +41,7 @@ tbody
                                     img.resource(src=path)
                             when 'Reference'
                                 if fieldValue
-                                    a.loading-ref(href=`#!/view/${fieldMeta.refEntity}${fieldValue}`,
+                                    a.loading-ref(href=`/#!view/${fieldMeta.refEntity}${fieldValue}`,
                                         entityName=fieldMeta.refEntity, id=fieldValue)=JC.digestId(fieldValue)
                             default
                                 span!=fieldValue

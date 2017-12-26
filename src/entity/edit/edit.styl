@@ -1,0 +1,24 @@
+@import "../../mixin"
+
+.page.page-edit-entity
+    .multiple-input
+        .multiple-input-item
+            removeBtnWidth = 24px
+
+            display inline-block
+            vertical-align top
+            width fieldWidthOne
+            padding 0 fieldItemSpace fieldItemSpace 0
+
+            .field-input-parent
+                display inline-block
+                width (fieldWidthOne - removeBtnWidth)
+                vertical-align middle
+
+            .remove-m-input-item
+                display inline-block
+                hh(inputHeight)
+                width removeBtnWidth
+                text-align center
+                text-decoration none
+                vertical-align middle

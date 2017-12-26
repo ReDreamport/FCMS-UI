@@ -7,6 +7,7 @@ interface JQuery {
     isChecked: () => boolean
     mustFind: (selector: string) => JQuery
     mustFindOne: (selector: string) => JQuery
+    mustClosest: (selector: string) => JQuery
     mustAttr: (name: string) => string
     mustIntAttr: (name: string) => number
     iterate: (func: ((j: JQuery, index: number) => any)) => void
@@ -28,7 +29,12 @@ declare const ST: {
     EntityLister: STFunc;
     ListEntityPage: STFunc;
     EntityListTbody: STFunc;
+    EditEntityPage: STFunc;
+    SingleSimpleField: STFunc;
+    MultipleSimpleField: STFunc;
+    MultipleSimpleInputItem: STFunc;
     //
+    DatePicker: STFunc;
     PageSwitch: STFunc;
     MenuItems: STFunc;
     //
@@ -108,6 +114,7 @@ interface EntityValue {
 
 interface FieldMeta {
     name: string
+    label: string
     type: string
     refEntity: string
     inputType: string
@@ -124,6 +131,7 @@ interface FieldMeta {
     optionsFunc?: string
     groupedOptions?: any
     optionWidth?: number
+    useGuide?: string
 }
 
 interface EntityMeta {

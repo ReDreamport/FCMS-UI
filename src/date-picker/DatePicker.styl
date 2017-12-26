@@ -1,0 +1,112 @@
+@import "../mixin.styl"
+
+.date-picker
+    position relative
+    user-select none
+
+    btnWidth = 36px
+
+    input
+        box-sizing border-box
+        border 0
+        padding-right btnWidth
+
+    .date-picker-btn
+        position absolute
+        z-index 10
+        width btnWidth
+        right 0
+        left auto
+        top 0
+        bottom 0
+        background #ededed
+        text-align center
+
+.data-picker-overlay
+    fixed(0, 0, 0, 0)
+    z-index (dialogZ + 100)
+    background rgba(#fff, .2)
+
+    .date-picker-box
+        absolute(50%, 0, auto, 0)
+        width 250px
+        margin 0 auto
+        background #fff
+        box-shadow 0 0 10px #aaa
+        padding 16px 24px 8px 24px
+        transform translateY(-50%)
+        border-radius 4px
+
+    .year-month
+        text-align center
+
+    .time-area
+        margin-top 8px
+        text-align center
+
+        select
+            width 50px
+            margin 0 4px
+            text-align center
+
+    .select-year
+    .select-month
+        width 60px
+        margin-right 4px
+        text-align center
+
+    a.prev-month
+    a.next-month
+        display inline-block
+        text-align center
+        margin 0 4px
+        hh(inputHeight)
+        vertical-align middle
+        font-size 12px
+
+    table
+        width 100%
+        margin-top 8px
+        font-size 12px
+        border-collapse separate
+        border-spacing 2px
+        table-layout fixed
+
+        tr:hover
+            background #fff
+        tr.current
+            background #fff
+
+        td, th
+            width 100% / 7
+            text-align center
+            line-height 18px
+            border-radius 4px
+            border 1px solid #fff
+
+            &.last-month, &.next-month
+                background #f2f2f2
+
+            &.today
+                border-bottom 1px solid cRed
+
+            &.selected
+                border 1px solid cBlue
+
+        td:hover
+            cursor pointer
+
+    .picker-actions
+        margin-top 16px
+        padding-top 8px
+        text-align center
+        border-top 1px solid cTableBorder
+
+        .btn
+            width 80px
+            margin 0 4px
+
+
+
+
+

@@ -63,6 +63,11 @@ export function extend() {
             if ($r.length !== 1) throw new Error("NotOne " + selector)
             return $r
         },
+        mustClosest(selector: string) {
+            const $c = this.closest(selector)
+            if (!$c.length) throw new Error("NotFound closest " + selector)
+            return $c
+        },
         mustAttr(name: string) {
             const v = this.attr(name)
             if (!v) throw new Error("No Attr " + name)

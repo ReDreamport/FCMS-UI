@@ -57,20 +57,47 @@ input[type="text"]
 input[type="password"]
 input[type="number"]
 select
+.date-picker
     box-sizing border-box
     display inline-block
+    vertical-align middle
     hh(inputHeight)
     border 1px solid cInputBorder
-    padding 0 4px
-    vertical-align middle
-    font-size inputFontSize
     border-radius 4px
+    padding 0 4px
+    font-size inputFontSize
 
 input[type="checkbox"]
 input[type="radio"]
     display inline-block
     hh(inputHeight)
     vertical-align middle
+
+.date-picker
+    btnWidth = 24px
+
+    position relative
+    padding 0 0
+    line-height normal
+
+    input
+        hh(inputHeight - 2px)
+        border none
+        width 100%
+        box-sizing border-box
+        padding-right (2px + btnWidth)
+
+    .open-calendar
+        absolute(0, 0, 0, auto)
+        z-index 1
+        display block
+        vertical-align middle
+        width btnWidth
+        text-align center
+        font-size 14px
+        border-left 1px solid cInputBorder
+        text-decoration none
+        line-height (inputHeight - 2px)
     
 table
     border-top 1px solid cTableBorder
@@ -119,36 +146,53 @@ table
         border 0
 
 .mc-form
-    ONE_WIDTH = 160px
-    
     font-size 13px
 
     .field
         display inline-block
         vertical-align top
-        padding 0 8px 8px 0
+        padding 0 fieldItemSpace fieldItemSpace 0
 
         &.w1
-            width ONE_WIDTH
+            width fieldWidthOne
         &.w2
-            width (2 * ONE_WIDTH)
+            width (2 * fieldWidthOne)
         &.w3
-            width (3 * ONE_WIDTH)
+            width (3 * fieldWidthOne)
         &.w4
-            width (4 * ONE_WIDTH)
+            width (4 * fieldWidthOne)
         &.wp100
             display block
             width auto
 
-        >.label
-            color cLabel
-            hh(28px)
-            textOverflow()
+        >.label-area
+            h = 30px
+            fontSize = 13px
+            .label
+                display inline-block
+                color cLabel
+                hh(h)
+                vertical-align middle
+                font-size fontSize
+
+            .label-actions
+                display inline-block
+                vertical-align middle
+                margin-left 12px
+                font-size fontSize
+                border-radius 4px
+                overflow hidden
+                
+                a.btn
+                    hh(h)
+                    border none
+                    border-radius 0
 
         input[type="text"]
         input[type="password"]
         input[type="number"]
         select
+        .date-picker
             box-sizing border-box
             width 100%
 
@@ -175,3 +219,5 @@ table
         color cRed
         border-bottom 1px solid cBorder
         margin-bottom 8px    
+
+
