@@ -28,17 +28,31 @@ mixin Select(options, value, extraClass)
         each o in options
             option(value=o[0], selected=o[0]===value)=o[1]
 
-mixin SimpleFieldInput(fm, fv)
+mixin FieldInputItem(fm, fv)
     .field-input-parent(ft=fm.type, fit=fm.inputType)
         case fm.inputType
             when "Text"
                 input(type="text", value=fv)
             when "Password"
                 input(type="password", value="")
+            when "TextArea"
+                textarea=fv
+            when "RichText"
+                .rich-text-preview
+                    .rich-text-preview-acitons
+                        a.edit-rich-text(href="javascript:") 编辑
+                    .preview-area!=fv
+            when "JSON"
+                textarea=fv && JSON.stringify(fv, null, 4)
             when "Select"
                 select
+                    if fm.finalOptions
+                        each o in fm.finalOptions
+                            option(value=o.key, selected=o.key===fv)=o.value
             when "Check"
                 input(type="checkbox", checked=fv)
+            when "CheckList"
+                .check-list
             when "Int"
                 input(type="number", value=fv)
             when "Float"
@@ -55,3 +69,20 @@ mixin SimpleFieldInput(fm, fv)
                 .date-picker(type="DateTime")
                     input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD HH:mm:ss"))
                     a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "File"
+                .file-input(value=fv)
+            when "Image"
+                .image-input(value=fv)
+            when "Reference"
+                .ref-list
+            when "InlineComponent"
+                .inline-component
+            when "PopupComponent"
+                .popup-component
+            
+mixin MultipleInputItem(fm, fv)
+    .multiple-input-item
+        .move-handle.iconfont.icon-tuodong
+        +FieldInputItem(fm, fv)
+        a.remove-m-input-item.iconfont.icon-close-c(href="javascript:")
+                

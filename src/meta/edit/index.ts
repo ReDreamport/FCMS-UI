@@ -1,5 +1,8 @@
+// cSpell:words sortablejs
+
 import $ = require("jquery")
 import _ = require("lodash")
+import Sortable = require("sortablejs")
 
 import { alertAjaxIfError, api } from "../../api"
 import { cloneByJSON, collectInputByFieldName } from "../../common"
@@ -45,15 +48,14 @@ export class CreateEditMeta extends Page {
         this.$page.on("click", ".remove-field", e => {
             const $row = $(e.target).closest("tr")
             const fieldName = $row.attr("field-name")
-            if (fieldName) delete this.entityMeta.fields[fieldName]
-            $row.remove()
-        })
 
-        this.$page.on("click", ".remove-field", e => {
-            const $row = $(e.target).closest("tr")
-            const fieldName = $row.attr("field-name")
-            if (fieldName) delete this.entityMeta.fields[fieldName]
-            $row.remove()
+            if (fieldName) {
+                if (!confirm(`确定删除 ${fieldName} 吗？`)) return
+                delete this.entityMeta.fields[fieldName]
+                $row.remove()
+            } else {
+                $row.remove()
+            }
         })
 
         this.$page.on("click", ".edit-field", e => {
@@ -65,6 +67,8 @@ export class CreateEditMeta extends Page {
                     this.finishEditFieldMeta(n, o)
                 })
         })
+
+        Sortable.create(this.$tbodyFields[0], {animation: 300})
 
         this.$page.mustFindOne(".save").click(() => {
             this.save()
@@ -157,9 +161,9 @@ export class CreateEditMeta extends Page {
         em.tableName = em.tableName || em.name
 
         if (em.digestFields) {
-            const fields = em.digestFields.split("|")
+            const digestFields = em.digestFields.split("|")
             const finalList = []
-            for (let f of fields) {
+            for (let f of digestFields) {
                 f = f.trim()
                 if (!this.entityMeta.fields[f])
                     throw new Error("摘要字段错误，无字段：" + f)
@@ -170,9 +174,17 @@ export class CreateEditMeta extends Page {
 
         const newEntityMeta = cloneByJSON(this.entityMeta)
         Object.assign(newEntityMeta, em)
-        // fields 是实时的，不需要再更新
+
         newEntityMeta.mongoIndexes = mongoIndexes
         newEntityMeta.mysqlIndexes = mysqlIndexes
+
+        // fields 按顺序取一遍
+        const fields = newEntityMeta.fields
+        newEntityMeta.fields = {}
+        this.$tbodyFields.find("tr").iterate($tr => {
+            const fieldName = $tr.mustAttr("field-name")
+            newEntityMeta.fields[fieldName] = fields[fieldName]
+        })
 
         console.log(newEntityMeta)
         return newEntityMeta

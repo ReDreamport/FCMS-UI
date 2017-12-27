@@ -4,8 +4,9 @@ import $ = require("jquery")
 
 import { api } from "./api"
 import { fileObjectToLink, formatDate, isSortableField,
-    uniqueId } from "./common"
+    makeSureArray, uniqueId } from "./common"
 import { showDatePicker } from "./date-picker"
+import { showRichEditorDialog } from "./dialog/index"
 import { digestId, getColumnStyle } from "./entity"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
@@ -52,7 +53,8 @@ function initJadeContext() {
         uniqueId,
         getColumnStyle,
         fileObjectToLink,
-        digestId
+        digestId,
+        makeSureArray
     }
 }
 
@@ -88,6 +90,13 @@ function initEvents() {
         if (!confirm("确定要退出系统吗？")) return
         const here = encodeURIComponent(location.href)
         location.href = `/api/sso/client/sign-out?callback=${here}`
+    })
+
+    $("body").on("click", ".rich-text-preview .edit-rich-text", function() {
+        const $rtp = $(this).closest(".rich-text-preview")
+        const $pa = $rtp.mustFindOne(".preview-area")
+        const html = $pa.html()
+        showRichEditorDialog(html, newText => { $pa.html(newText) })
     })
 }
 

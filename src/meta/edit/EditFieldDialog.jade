@@ -1,6 +1,6 @@
 include ../../mixin
 
-.dialog-overlay
+.dialog-overlay.edit-field-dialog
     .dialog
         .dialog-header
             span 编辑字段
@@ -8,6 +8,9 @@ include ../../mixin
             a.dialog-close-btn.iconfont.icon-close(href="javascript:")
         .dialog-content
             .mc-form
+                .row
+                    +Field("comment", "开发备注", "", "p100")
+                        input(type="text", value=fieldMeta.comment)
                 .section
                     .section-title 核心
                     .row
@@ -21,9 +24,16 @@ include ../../mixin
                             +Select(entityOptions, fieldMeta.refEntity)
                         +Field("multiple", "多值的")
                             input(type="checkbox", checked=fieldMeta.multiple)
+                .section
+                    .section-title 存储
                     .row
-                        +Field("comment", "开发备注", "", "p100")
-                            input(type="text", value=fieldMeta.comment)
+                        +Field("persistType", "持久化类型")
+                            +Select([], fieldMeta.persistType, "for-persist-type")
+                        +Field("sqlColM", "SQL列宽")
+                            input(type="number", value=fieldMeta.sqlColM)
+                        +Field("fileStoreDir", "文件存储目录")
+                            input(type="text", value=fieldMeta.fileStoreDir)
+
                 .section
                     .section-title 显示
                     .row
@@ -38,17 +48,17 @@ include ../../mixin
                         +Field("inEditPage", "编辑界面")
                             +Select([["edit", "可编辑"], ["readonly", "只读"], ["hide", "不显示"]], fieldMeta.inEditPage)
                     .row
+                        +Field("", "输入选项（简单文本）", "", "p100")
+                            .text-options
+                                input.new-option(type="text")
+                                .options-list
+                        +Field("", "输入选项（键值）", "", "p100")
+                            .kv-options
+                                .options-list
+                                    a.add-option.btn.iconfont.icon-add(href="javacript:")
+                    .row
                         +Field("userGuide", "使用说明", "", "p100")
                             input(type="text", value=fieldMeta.userGuide)
-                .section
-                    .section-title 存储
-                    .row
-                        +Field("persistType", "持久化类型")
-                            +Select([], fieldMeta.persistType, "for-persist-type")
-                        +Field("sqlColM", "SQL列宽")
-                            input(type="number", value=fieldMeta.sqlColM)
-                        +Field("fileStoreDir", "文件存储目录")
-                            input(type="text", value=fieldMeta.fileStoreDir)
 
         .dialog-footer
             a.finish.btn(href="javascript:") 确定

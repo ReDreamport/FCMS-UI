@@ -1,0 +1,85 @@
+@import "../../mixin"
+    
+.dialog-overlay.edit-field-dialog
+    .text-options
+        input.new-option
+            display block
+            width 250px
+
+        .options-list
+            padding 6px 0
+
+            .option
+                display inline-block
+                vertical-align middle
+                margin-right 4px
+                margin-bottom 4px
+                border 1px solid cInputBorder
+                font-size 12px
+                hh(28px)
+                border-radius 4px
+                overflow hidden
+
+                .move-handle, .text, .remove-option
+                    display inline-block
+
+                .text
+                    padding 0 8px
+
+                .move-handle
+                    width 24px
+                    text-align center
+                    border-right 1px solid cInputBorder
+                    color cBlue
+
+                    &:hover
+                        cursor move
+                        color cGreen
+
+                .remove-option
+                    width 24px
+                    text-align center
+                    border-left 1px solid cInputBorder
+                    text-decoration none
+                    color cBlue
+    
+    .kv-options
+         .options-list
+            padding 6px 0
+
+            .option
+                display inline-block
+                vertical-align top
+                margin-right 4px
+                margin-bottom 4px
+                border 1px solid cInputBorder
+                border-radius 4px
+                overflow hidden
+                font-size 12px
+                width 120px
+
+                .option-actions
+                    hh(28px)
+                    border-bottom 1px solid cInputBorder
+
+                    .move-handle, .remove-option
+                        display block
+                        width 30px
+                        text-align center
+                        text-decoration none
+                        color cBlue
+                    
+                    .move-handle
+                        float left
+
+                    .remove-option
+                        float right
+
+                input
+                    display block
+                    width 100%
+                    border none
+                    border-radius 0
+
+                input.key
+                    border-bottom 1px solid cInputBorder

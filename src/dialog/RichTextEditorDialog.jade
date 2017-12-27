@@ -1,0 +1,14 @@
+include ../mixin
+
+.dialog-overlay.dialog-rich-text-editor-dialog
+    .dialog
+        .dialog-header
+            span 富文本编辑器
+            a.dialog-expand.iconfont.icon-expand(href="javascript:")
+            a.dialog-close-btn.iconfont.icon-close(href="javascript:")
+        .dialog-content
+            .for-all-height
+                textarea.placeholder!=text
+            
+        .dialog-footer
+            a.finish.btn(href="javascript:") 确定

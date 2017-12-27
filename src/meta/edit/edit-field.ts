@@ -1,12 +1,15 @@
-// cSpell:words varchar tinyint bigint datetime
+// cSpell:words varchar tinyint bigint datetime sortablejs
 
 import $ = require("jquery")
+import Sortable = require("sortablejs")
+
 import { collectInputByFieldName, FIELD_TYPES,
+    isEnterKey,
     replaceSelectOptionsByStringArray,
     stringArrayToOptionArray } from "../../common"
 import { initDialog } from "../../dialog"
 import { getMeta } from "../../globals"
-import { toastError } from "../../toast/index"
+import { toastError } from "../../toast"
 
 const typeInputPersist = {
     String: {
@@ -99,14 +102,32 @@ export function editFieldMeta(entityMeta: EntityMeta,
     const $type = $overlay.mustFindOne(".for-type")
     const $input = $overlay.mustFindOne(".for-input-type")
     const $persist = $overlay.mustFindOne(".for-persist-type")
+
     $type.on("change", function() {
         onTypeChange(entityMeta, $type,
             $input, fieldMeta && fieldMeta.inputType,
             $persist, fieldMeta && fieldMeta.persistType)
     })
 
+    // 保存
     $overlay.mustFindOne(".finish").click(function() {
         const newFM = collectInputByFieldName($overlay.mustFindOne(".mc-form"))
+
+        // textOptions
+        newFM.textOptions = []
+        $overlay.find(".text-options .option").iterate($o => {
+            const text = $o.mustFindOne(".text").text()
+            newFM.textOptions.push(text)
+        })
+
+        // kvOptions
+        newFM.kvOptions = []
+        $overlay.find(".kv-options .option").iterate($o => {
+            const key = $o.mustFindOne(".key").stringInput()
+            const value = $o.mustFindOne(".value").stringInput()
+            newFM.kvOptions.push({key, value})
+        })
+
         try {
             checkInput(newFM)
         } catch (e) {
@@ -119,12 +140,61 @@ export function editFieldMeta(entityMeta: EntityMeta,
         $overlay.remove()
     })
 
+    initTextOptions($overlay, fieldMeta)
+    initKvOptions($overlay, fieldMeta)
+
     // 初始化
     onTypeChange(entityMeta, $type,
         $input, fieldMeta && fieldMeta.inputType,
         $persist, fieldMeta && fieldMeta.persistType)
 
+
     initDialog($overlay, dialogOpenOrigin)
+}
+
+function initTextOptions($overlay: JQuery, fieldMeta: FieldMeta | null) {
+    const $list = $overlay.mustFindOne(".text-options .options-list")
+
+    if (fieldMeta && fieldMeta.textOptions) {
+        for (const text of fieldMeta.textOptions) {
+           $list.append(ST.TextOption({text}))
+        }
+    }
+
+    Sortable.create($list[0], {handle: ".move-handle", animation: 300})
+
+    $overlay.mustFindOne(".text-options input.new-option").on("keydown", e => {
+        if (!isEnterKey(e)) return
+        const $i = $(e.target)
+        const text = $i.stringInput()
+        if (!text) return
+        $list.append(ST.TextOption({text}))
+        $i.val("")
+    })
+
+    $list.on("click", ".remove-option", function() {
+        $(this).closest(".option").remove()
+    })
+}
+
+function initKvOptions($overlay: JQuery, fieldMeta: FieldMeta | null) {
+    const $list = $overlay.mustFindOne(".kv-options .options-list")
+
+    const $addBtn = $overlay.mustFindOne(".kv-options .add-option")
+
+    if (fieldMeta && fieldMeta.kvOptions) {
+        for (const o of fieldMeta.kvOptions) {
+           $addBtn.before(ST.KvOption(o))
+        }
+    }
+
+    Sortable.create($list[0], {handle: ".move-handle", animation: 300})
+
+    $addBtn.on("click", e => { $addBtn.before(ST.KvOption({})) })
+
+    $list.on("click", ".remove-option", function() {
+        $(this).closest(".option").remove()
+    })
 }
 
 function checkInput(fieldMeta: any) {

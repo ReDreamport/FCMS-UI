@@ -1,5 +1,10 @@
 // cSpell:words CKEDITOR Gongju Xianxia
 
+interface KeyValuePair {
+    key: string
+    value: string
+}
+
 interface JQuery {
     intInput: (alternative: number) => number
     floatInput: (alternative: number) => number
@@ -25,16 +30,18 @@ declare const ST: {
     MySQLIndexItem: STFunc;
     FieldMetaRow: STFunc;
     EditFieldDialog: STFunc;
+    TextOption: STFunc;
+    KvOption: STFunc;
     //
     EntityLister: STFunc;
     ListEntityPage: STFunc;
     EntityListTbody: STFunc;
     EditEntityPage: STFunc;
-    SingleSimpleField: STFunc;
-    MultipleSimpleField: STFunc;
-    MultipleSimpleInputItem: STFunc;
+    MultipleInputItem: STFunc;
+    EntityEditFields: STFunc;
     //
     DatePicker: STFunc;
+    RichTextEditorDialog: STFunc;
     PageSwitch: STFunc;
     MenuItems: STFunc;
     //
@@ -132,6 +139,9 @@ interface FieldMeta {
     groupedOptions?: any
     optionWidth?: number
     useGuide?: string
+    textOptions?: string[]
+    kvOptions?: KeyValuePair[]
+    finalOptions?: KeyValuePair[]
 }
 
 interface EntityMeta {

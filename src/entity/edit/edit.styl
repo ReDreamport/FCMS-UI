@@ -1,36 +1,53 @@
 @import "../../mixin"
 
 .page.page-edit-entity
-    .multiple-input
-        .multiple-input-item
-            removeBtnWidth = 24px
-            moveHandleWidth = 24px
+    removeBtnWidth = 24px
+    moveHandleWidth = 24px
 
-            display inline-block
-            vertical-align top
-            width fieldWidthOne
-            padding 0 fieldItemSpace fieldItemSpace 0
+    .field >.label-area >.label
+        font-weight 500
 
-            .field-input-parent
-                display inline-block
-                width (fieldWidthOne - removeBtnWidth - moveHandleWidth)
-                vertical-align middle
+    .multiple-input .multiple-input-item
+        position relative
+        display inline-block
+        vertical-align top
+        width fieldWidthOne
+        padding-bottom fieldItemSpace // 项之间的距离
+        margin-right fieldItemSpace
 
-            .remove-m-input-item, .move-handle
-                display inline-block
-                vertical-align top
-                hh(inputHeight)
-                width removeBtnWidth
-                text-align center
-                text-decoration none
-                color cBlue
+        .field-input-parent
+            display block
+            width (fieldWidthOne - removeBtnWidth - moveHandleWidth)
+            margin 0 removeBtnWidth 0 moveHandleWidth
+            
+        .remove-m-input-item, .move-handle
+            position absolute
+            z-index 10
+            display block
+            top 0
+            hh(inputHeight)
+            text-align center
+            text-decoration none
+            color cBlue
 
-            .move-handle
-                width moveHandleWidth
-                
-                &:hover
-                    cursor move
-                    color cGreen
+        .move-handle
+            width moveHandleWidth
+            left 0
+            
+            &:hover
+                cursor move
+                color cGreen
 
-            .remove-m-input-item
-                width removeBtnWidth
+        .remove-m-input-item
+            width removeBtnWidth
+            right  0
+
+    .multiple-input.for-wide .multiple-input-item
+        display block
+        width 100%
+        margin-right 0
+
+        .field-input-parent
+            width auto
+            margin 0 removeBtnWidth 0 moveHandleWidth
+        

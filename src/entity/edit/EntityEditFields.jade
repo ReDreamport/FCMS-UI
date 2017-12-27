@@ -1,0 +1,65 @@
+include ../../mixin
+
+mixin FieldAction(actions)
+    if actions.add
+        a.add.btn.iconfont.icon-add(href="javascript:")
+    if actions.edit
+        a.edit.btn.iconfont.icon-edit(href="javascript:")
+    if actions.empty
+        a.empty.btn.iconfont.icon-delete2(href="javascript:")
+
+//- 简单单值字段
+.section
+    each fn in singleSimpleFieldNames
+        - var fm = entityMeta.fields[fn]
+        - var fv = entityValue[fn]
+        .field(field-name=fn, class="w1")
+            .label-area
+                .label=fm.label
+            +FieldInputItem(fm, fv)
+            .tip=tip
+
+ //- 简单多值字段
+.section
+    - var actions = {add: true, empty: true}
+    each fn in multipleSimpleFieldNames
+        - var fm = entityMeta.fields[fn]
+        - var fv = entityValue[fn]
+        .row
+            .field(field-name=fn, class="wp100", entity-name=entityMeta.name)
+                .label-area
+                    .label=fm.label
+                    .label-actions
+                        +FieldAction(actions)
+                .tip=tip
+                .multiple-input
+                    if fv
+                        - var list = JC.makeSureArray(fv)
+                        each item in list
+                            +MultipleInputItem(fm, item)
+
+ //- 面积大字段，单值+多值
+.section
+    - var actions = {add: true, empty: true}
+    each fn in bigInputFieldNames
+        - var fm = entityMeta.fields[fn]
+        - var fv = entityValue[fn]
+        .row
+            .field(field-name=fn, class="wp100", entity-name=entityMeta.name)
+                .label-area
+                    .label=fm.label
+                    .label-actions
+                        if fm.multiple
+                            +FieldAction(actions)
+                .tip=tip
+                if fm.multiple
+                    .multiple-input.for-wide
+                        if fv
+                            - var list = JC.makeSureArray(fv)
+                            each item in list
+                                +MultipleInputItem(fm, item)
+                else
+                    +FieldInputItem(fm, fv)
+
+//- fileFieldNames, imageFieldNames,
+//-             componentFieldNames, referenceFieldNames

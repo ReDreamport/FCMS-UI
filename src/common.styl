@@ -73,6 +73,36 @@ input[type="radio"]
     hh(inputHeight)
     vertical-align middle
 
+textarea
+    display block
+    box-sizing border-box
+    vertical-align top
+    line-height 1.5em
+    border 1px solid cInputBorder
+    border-radius 4px
+    padding 4px
+    font-size inputFontSize
+    height 6em
+
+.rich-text-preview
+    display block
+    box-sizing border-box
+    vertical-align top
+    border 1px solid cInputBorder
+    border-radius 4px
+    font-size inputFontSize
+
+    .rich-text-preview-acitons
+        hh(28px)
+        border-bottom 1px solid cInputBorder
+        padding 0 8px
+
+    .preview-area
+        padding 12px 8px
+        min-height 48px
+        max-height 200px
+        overflow auto
+
 .date-picker
     btnWidth = 24px
 
@@ -99,6 +129,7 @@ input[type="radio"]
         text-decoration none
         line-height (inputHeight - 2px)
     
+
 table
     border-top 1px solid cTableBorder
 
@@ -193,6 +224,7 @@ table
         input[type="number"]
         select
         .date-picker
+        textarea
             box-sizing border-box
             width 100%
 

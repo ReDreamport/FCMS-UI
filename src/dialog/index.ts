@@ -1,3 +1,7 @@
+// cSpell:words CKEDITOR
+
+import $ = require("jquery")
+
 export function initDialog($overlay: JQuery,
     dialogOpenOrigin: {left: number; top: number} | null) {
 
@@ -29,6 +33,24 @@ export function initDialog($overlay: JQuery,
 
     $overlay.mustFindOne(".dialog-close-btn").click(function() {
         $overlay.remove()
+    })
+}
+
+export function showRichEditorDialog(text: string,
+    callback: (newText: string) => void) {
+
+    const $overlay = $(ST.RichTextEditorDialog({text})).appendTo($("body"))
+
+    const editor = CKEDITOR.replace($overlay.mustFindOne("textarea")[0],
+        {height: "375px"})
+
+    initDialog($overlay, null)
+
+    $overlay.mustFindOne(".dialog-footer .finish").click(function() {
+        const input = editor.getData()
+        editor.destroy()
+        $overlay.remove()
+        callback(input)
     })
 }
 
