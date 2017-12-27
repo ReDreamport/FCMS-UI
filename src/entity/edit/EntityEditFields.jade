@@ -8,9 +8,9 @@ mixin FieldAction(actions)
     if actions.empty
         a.empty.btn.iconfont.icon-delete2(href="javascript:")
 
-//- 简单单值字段
+//- inline block 字段
 .section
-    each fn in singleSimpleFieldNames
+    each fn in inlineFieldNames
         - var fm = entityMeta.fields[fn]
         - var fv = entityValue[fn]
         .field(field-name=fn, class="w1")
@@ -19,12 +19,12 @@ mixin FieldAction(actions)
             +FieldInputItem(fm, fv)
             .tip=tip
 
- //- 简单多值字段
+ //- block 字段
 .section
-    - var actions = {add: true, empty: true}
-    each fn in multipleSimpleFieldNames
+    each fn in blockFieldNames
         - var fm = entityMeta.fields[fn]
         - var fv = entityValue[fn]
+        - var actions = fieldMetaToActions(fm)
         .row
             .field(field-name=fn, class="wp100", entity-name=entityMeta.name)
                 .label-area
@@ -32,34 +32,45 @@ mixin FieldAction(actions)
                     .label-actions
                         +FieldAction(actions)
                 .tip=tip
-                .multiple-input
-                    if fv
-                        - var list = JC.makeSureArray(fv)
-                        each item in list
-                            +MultipleInputItem(fm, item)
-
- //- 面积大字段，单值+多值
-.section
-    - var actions = {add: true, empty: true}
-    each fn in bigInputFieldNames
-        - var fm = entityMeta.fields[fn]
-        - var fv = entityValue[fn]
-        .row
-            .field(field-name=fn, class="wp100", entity-name=entityMeta.name)
-                .label-area
-                    .label=fm.label
-                    .label-actions
+                case fm.inputType
+                    when "TextArea"
+                    when "RichText"
+                    when "JSON"
                         if fm.multiple
-                            +FieldAction(actions)
-                .tip=tip
-                if fm.multiple
-                    .multiple-input.for-wide
-                        if fv
-                            - var list = JC.makeSureArray(fv)
+                            .multiple-input.for-wide
+                                - var list = JC.makeSureArray(fv) || []
+                                each item in list
+                                    +MultipleInputItem(fm, item)
+                        else
+                            +FieldInputItem(fm, fv)
+                    when "CheckList"
+                        .check-list
+                            if fm.finalOptions
+                                if fm.multiple
+                                    - var vList = JC.makeSureArray(fv) || []
+                                    each o in fm.finalOptions
+                                        label
+                                            input(type="checkbox", value=o.key checked=(vList.indexOf(o.key) >=0))
+                                            span=o.value
+                                else
+                                    each o in fm.finalOptions
+                                        label
+                                            input(type="radio", value=o.key checked=(fv===o.key))
+                                            span=o.value
+                    //- 为了允许清空，File 和 Image 一律当做多值的
+                    when "File"
+                    when "Image"
+                        .multiple-input.for-fit
+                            - var list = fm.multiple ? (JC.makeSureArray(fv) || []) : [fv]
                             each item in list
                                 +MultipleInputItem(fm, item)
-                else
-                    +FieldInputItem(fm, fv)
+                    default
+                        //- "Text", "Password", "Select", "Check", "Int", "Float"
+                        //- "Date", "Time", "DateTime"
+                        .multiple-input
+                            - var list = JC.makeSureArray(fv) || []
+                            each item in list
+                                +MultipleInputItem(fm, item)
 
-//- fileFieldNames, imageFieldNames,
-//-             componentFieldNames, referenceFieldNames
+//-     
+//-     "InlineComponent", "PopupComponent", "TabledComponent", "Reference"

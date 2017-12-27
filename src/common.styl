@@ -3,6 +3,9 @@
 a
     color cBlue
 
+.hidden
+    display none
+
 .align-left
     text-align left
 
@@ -33,11 +36,10 @@ a
     &:hover
         background cRed + 80%
 
-
 .plain-btn
     display inline-block
     hh(btnHeight)
-    margin 0 8px 8px 0
+    padding 0 8px
     text-decoration none
     font-size btnFontSize
 
@@ -87,7 +89,6 @@ textarea
 .rich-text-preview
     display block
     box-sizing border-box
-    vertical-align top
     border 1px solid cInputBorder
     border-radius 4px
     font-size inputFontSize
@@ -103,8 +104,34 @@ textarea
         max-height 200px
         overflow auto
 
+.file-input
+    box-sizing border-box
+    display inline-block
+    vertical-align top
+    hh(inputHeight)
+    border 1px solid cInputBorder
+    border-radius 4px
+    font-size inputFontSize
+    color cBlue
+
+    .info, .download, .upload
+        display inline-block
+        vertical-align top
+        text-decoration none
+        line-height (inputHeight - 2px)
+
+    .download, .upload
+        width 30px
+        text-align center
+
+    .info, .download
+        border-right 1px solid cInputBorder
+
+    .info
+        padding 0 12px
+
 .date-picker
-    btnWidth = 24px
+    btnWidth = 30px
 
     position relative
     padding 0 0

@@ -71,9 +71,19 @@ export function formatDate(v: any, format: string) {
     return d.format(format)
 }
 
-export function fileObjectToLink(obj: {path: string}) {
+export function fileObjectToLink(obj: UploadResult) {
     const path = obj && obj.path
-    return path && ("/r/" + path) || ""
+    return path && ("/r/" + path) || "javascript:"
+}
+
+export function fileObjectToInfo(obj: UploadResult | null | undefined) {
+    if (!obj) {
+        return "（无）"
+    } else {
+        const indexOfExt = obj.path.lastIndexOf(".")
+        const ext = indexOfExt > 0 ? obj.path.substring(indexOfExt + 1) : ""
+        return `${obj.name || ext} [${showFileSize(obj.size)}]`
+    }
 }
 
 export function isSortableField(fieldMeta: FieldMeta) {
@@ -142,4 +152,16 @@ export function makeSureArray(v: any) {
     if (_.isNil(v)) return v
     if (_.isArray(v)) return v
     return [v]
+}
+
+export function showFileSize(size: number | null | undefined) {
+    if (!size) return "0"
+    if (size < 1024)
+        return size + " b"
+    else if (size < 1024 * 1024)
+        return (size / 1024).toFixed(2) + " KB"
+    else if (size < 1024 * 1024 * 1024)
+        return (size / 1024 / 1024).toFixed(2) + " MB"
+    else
+        return (size / 1024 / 1024 / 1024).toFixed(2) + " GB"
 }

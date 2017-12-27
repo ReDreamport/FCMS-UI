@@ -1,6 +1,6 @@
 // cSpell:words sortablejs
 
-import { alertAjaxIfError, api } from "../../api"
+import { alertAjaxIfError, api, upload } from "../../api"
 import { SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
 import { Page } from "../../page"
@@ -30,6 +30,24 @@ function decideFinalOptions(entityMeta: EntityMeta) {
     }
 }
 
+function fieldMetaToActions(fieldMeta: FieldMeta)
+    : {add?: boolean; edit?: boolean; empty?: boolean} {
+
+    const type = fieldMeta.type
+    const inputType = fieldMeta.inputType
+    if (type === "Reference") {
+        return {edit: true, empty: true}
+    } else if (inputType === "CheckList") {
+        return {}
+    } else if (fieldMeta.multiple) {
+        return {add: true, empty: true}
+    } else {
+        return {}
+    }
+    // "File", "Image",
+    // "InlineComponent", "PopupComponent", "TabledComponent", "Reference"
+}
+
 class EntityEditForm {
     private $root: JQuery
 
@@ -49,44 +67,30 @@ class EntityEditForm {
         const fieldNames = Object.keys(this.entityMeta.fields)
         _.pull(fieldNames, ...SYSTEM_FIELDS)
 
-        const singleSimpleFieldNames: string[] = []
-        const multipleSimpleFieldNames: string[] = []
-        const bigInputFieldNames: string[] = []
-        const fileFieldNames: string[] = []
-        const imageFieldNames: string[] = []
-        const componentFieldNames: string[] = []
-        const referenceFieldNames: string[] = []
+        const inlineFieldNames: string[] = []
+        const blockFieldNames: string[] = []
 
         for (const fieldName of fieldNames) {
             const fieldMeta = this.entityMeta.fields[fieldName]
             const type = fieldMeta.type
             const inputType = fieldMeta.inputType
 
-            if (type === "Reference") {
-                referenceFieldNames.push(fieldName)
-            } else if (type === "Component") {
-                componentFieldNames.push(fieldName)
-            } else if (type === "File") {
-                fileFieldNames.push(fieldName)
-            } else if (type === "Image") {
-                imageFieldNames.push(fieldName)
-            } else if (type === "Object") {
-                bigInputFieldNames.push(fieldName)
+            if (fieldMeta.multiple) {
+                blockFieldNames.push(fieldName)
+            } else if (type === "Reference" || type === "Component"
+                || type === "File" || type === "Image" || type === "Object") {
+                blockFieldNames.push(fieldName)
             } else if (inputType === "RichText" || inputType === "TextArea"
                 || inputType === "CheckList") {
-                bigInputFieldNames.push(fieldName)
-            } else if (fieldMeta.multiple) {
-                multipleSimpleFieldNames.push(fieldName)
+                blockFieldNames.push(fieldName)
             } else {
-                singleSimpleFieldNames.push(fieldName)
+                inlineFieldNames.push(fieldName)
             }
         }
 
         const jadeCtx = {
             entityMeta: this.entityMeta, entityValue: this.entityInitValue,
-            singleSimpleFieldNames, multipleSimpleFieldNames,
-            bigInputFieldNames, fileFieldNames, imageFieldNames,
-            componentFieldNames, referenceFieldNames}
+            inlineFieldNames, blockFieldNames, fieldMetaToActions}
 
         const $fields = $(ST.EntityEditFields(jadeCtx)).appendTo(this.$root)
 
@@ -117,11 +121,43 @@ class EntityEditForm {
         $fields.on("click", ".remove-m-input-item", e => {
             $(e.target).mustClosest(".multiple-input-item").remove()
         })
+
+        // 文件上传
+        $fields.on("click", ".file-input .upload", function() {
+            const $fileInput = $(this).mustClosest(".file-input")
+            const $file = $fileInput.mustFindOne(".file")
+            const $info = $fileInput.mustFindOne(".info")
+
+            $file.off("change").on("change", function() {
+                $info.html("上传中...")
+                upload($file, r => {
+                    if (!r) return
+                    const $inputItem
+                        = $fileInput.mustClosest(".multiple-input-item")
+                    const fm = getFieldMetaOfMyField($inputItem)
+                    for (const fv of r) {
+                        $inputItem.before(ST.MultipleInputItem({fm, fv}))
+                    }
+                    $inputItem.remove()
+                })
+                $file.val("")
+            })
+            $file.click()
+        })
     }
 
     getInput() {
         this.$root.find("")
     }
+}
+
+function getFieldMetaOfMyField($from: JQuery) {
+    const $field = $from.mustClosest(".field")
+    const entityName = $field.mustAttr("entity-name")
+    const fieldName = $field.mustAttr("field-name")
+    const entityMeta = getMeta().entities[entityName]
+    const fm = entityMeta.fields[fieldName]
+    return fm
 }
 
 class CreateEditEntity extends Page {

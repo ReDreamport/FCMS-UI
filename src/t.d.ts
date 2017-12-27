@@ -174,7 +174,8 @@ interface SelectOption {
 
 interface UploadResult {
     path: string,
-    size?: number
+    size?: number,
+    name?: string
 }
 
 type UploadCallback = (r: UploadResult[] | null) => void

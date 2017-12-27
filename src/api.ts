@@ -25,9 +25,7 @@ export function parseXhrErrorMessage(xhr: JQuery.jqXHR): string {
     }
 }
 
-export function upload($file: JQuery, entityName: string, fieldName: string,
-    callback: UploadCallback) {
-
+export function upload($file: JQuery, callback: UploadCallback) {
     const fileDOM = $file[0]
     const files = (fileDOM as HTMLInputElement).files
     if (!(files && files.length)) return callback(null)
@@ -43,7 +41,7 @@ export function upload($file: JQuery, entityName: string, fieldName: string,
     const resultList: UploadResult[] = []
 
     function onOneFileDone(index: number, result: boolean,
-                           data?: UploadResult) {
+        data?: UploadResult) {
         fileCount--
         if (result && data) resultList[index] = data
         if (fileCount === 0) callback(resultList)
@@ -51,7 +49,7 @@ export function upload($file: JQuery, entityName: string, fieldName: string,
 
     function uploadOne(index: number, file: File) {
         const xhr = new XMLHttpRequest()
-        xhr.open("POST", `file?entityName=${entityName}&fieldName=${fieldName}`)
+        xhr.open("POST", "/api/c/file")
         xhr.onload = () => {
             switch (xhr.status) {
             case 200:

@@ -51,8 +51,6 @@ mixin FieldInputItem(fm, fv)
                             option(value=o.key, selected=o.key===fv)=o.value
             when "Check"
                 input(type="checkbox", checked=fv)
-            when "CheckList"
-                .check-list
             when "Int"
                 input(type="number", value=fv)
             when "Float"
@@ -70,9 +68,14 @@ mixin FieldInputItem(fm, fv)
                     input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD HH:mm:ss"))
                     a.open-calendar.iconfont.icon-calendar(href="javascript:")
             when "File"
-                .file-input(value=fv)
+                .file-input(value=fv&&JSON.stringify(fv))
+                    input.file.hidden(type="file", multiple=fm.multiple)
+                    - var title = fv && ((fv.name || "下载") + ("[" + JC.showFileSize(fv.size) + "]")) || "（无）"
+                    span.info=JC.fileObjectToInfo(fv)
+                    a.download.iconfont.icon-download(href=JC.fileObjectToLink(fv), target="_blank")
+                    a.upload.iconfont.icon-upload(href="javascript:")
             when "Image"
-                .image-input(value=fv)
+                .image-input(value=fv&&JSON.stringify(fv))
             when "Reference"
                 .ref-list
             when "InlineComponent"

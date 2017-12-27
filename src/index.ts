@@ -3,8 +3,8 @@
 import $ = require("jquery")
 
 import { api } from "./api"
-import { fileObjectToLink, formatDate, isSortableField,
-    makeSureArray, uniqueId } from "./common"
+import { fileObjectToInfo, fileObjectToLink, formatDate, isSortableField,
+    makeSureArray, showFileSize, uniqueId } from "./common"
 import { showDatePicker } from "./date-picker"
 import { showRichEditorDialog } from "./dialog/index"
 import { digestId, getColumnStyle } from "./entity"
@@ -53,8 +53,10 @@ function initJadeContext() {
         uniqueId,
         getColumnStyle,
         fileObjectToLink,
+        fileObjectToInfo,
         digestId,
-        makeSureArray
+        makeSureArray,
+        showFileSize
     }
 }
 
