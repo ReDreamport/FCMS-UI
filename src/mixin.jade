@@ -72,12 +72,23 @@ mixin FieldInputItem(fm, fv)
                     input.file.hidden(type="file", multiple=fm.multiple)
                     - var title = fv && ((fv.name || "下载") + ("[" + JC.showFileSize(fv.size) + "]")) || "（无）"
                     span.info=JC.fileObjectToInfo(fv)
-                    a.download.iconfont.icon-download(href=JC.fileObjectToLink(fv), target="_blank")
+                    a.download.iconfont.icon-download(href=JC.fileObjectToLink(fv)||"javascript:", target="_blank")
                     a.upload.iconfont.icon-upload(href="javascript:")
             when "Image"
                 .image-input(value=fv&&JSON.stringify(fv))
+                    input.file.hidden(type="file", multiple=fm.multiple)
+                    - var src = JC.fileObjectToLink(fv)
+                    if src
+                        img.preview(src=src)
+                    a.upload.iconfont.icon-upload(href="javascript:")
+                    .status
             when "Reference"
-                .ref-list
+                if (typeof fv === "string")
+                    .ref-item
+                        +LoadingRef(fm.refEnttiy, fv)
+                else if fv && fv.id
+                    .ref-item(value=JSON.stringify(fv))
+                        +EntityDigest(fv.icon, fv.digest, fv.id)
             when "InlineComponent"
                 .inline-component
             when "PopupComponent"
@@ -89,3 +100,12 @@ mixin MultipleInputItem(fm, fv)
         +FieldInputItem(fm, fv)
         a.remove-m-input-item.iconfont.icon-close-c(href="javascript:")
                 
+mixin EntityDigest(icon, digest, id)
+    .entity-digest(id=id)
+        if icon
+            .img-parent
+                img.icon(src=icon)
+        .digest!=digest
+
+mixin LoadingRef(refEntity, id)
+    .loading-ref(entityName=refEntity, id=id)=id

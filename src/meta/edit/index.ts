@@ -12,6 +12,9 @@ import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
 import { editFieldMeta } from "./edit-field"
 
+const ValidDigestFieldTypes = ["String", "Boolean", "Int", "Float",
+    "Date", "Time", "DateTime", "Reference"]
+
 export class CreateEditMeta extends Page {
     protected entityName: string
     protected entityMeta: EntityMeta
@@ -160,16 +163,30 @@ export class CreateEditMeta extends Page {
         if (!em.label) throw new Error("显示名必填")
         em.tableName = em.tableName || em.name
 
-        if (em.digestFields) {
-            const digestFields = em.digestFields.split("|")
-            const finalList = []
-            for (let f of digestFields) {
-                f = f.trim()
-                if (!this.entityMeta.fields[f])
-                    throw new Error("摘要字段错误，无字段：" + f)
-                finalList.push(f)
+        if (em.digestConfig) {
+            em.fieldsForDigest = []
+            const digestGroups = em.digestConfig.split("&")
+            for (let digestGroup of digestGroups) {
+                digestGroup = digestGroup.trim()
+                const digestFields = digestGroup.split("|")
+                for (let df of digestFields) {
+                    df = df.trim()
+                    const fieldMeta = this.entityMeta.fields[df]
+                    if (!fieldMeta)
+                        throw new Error("摘要字段错误，无字段：" + df)
+                    if (!(ValidDigestFieldTypes.indexOf(fieldMeta.type) >= 0))
+                        throw new Error("摘要字段类型错误：" + df)
+
+                    em.fieldsForDigest.push(df)
+                }
             }
-            em.digestFields = finalList
+        }
+        if (em.iconField) {
+            const fieldMeta = this.entityMeta.fields[em.iconField]
+            if (!fieldMeta)
+                throw new Error("图标字段不存在")
+            if (fieldMeta.type !== "Image")
+                throw new Error("图标字段不是图片")
         }
 
         const newEntityMeta = cloneByJSON(this.entityMeta)

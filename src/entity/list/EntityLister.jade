@@ -18,9 +18,12 @@
         table.fix
             thead
                 tr
-                    th.align-center(style="width: 30px;")
-                        input.check-all(type="checkbox")
-                    th.align-center(style="width: 120px;")
+                    if forSelect
+                        th(style="width: 60px;")
+                    else
+                        th.align-center(style="width: 30px;")
+                            input.check-all(type="checkbox")
+                        th.align-center(style="width: 120px;")
                     each fn in listFieldNames
                         - var fieldMeta = entityMeta.fields[fn]
                         th(style=JC.getColumnStyle(fieldMeta))=fieldMeta.label

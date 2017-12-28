@@ -1,0 +1,13 @@
+include ../../mixin
+
+.dialog-overlay.select-entity-dialog
+    .dialog
+        .dialog-header
+            span #{multiple?"多选":"单选"} #{label}
+            a.dialog-expand.iconfont.icon-expand(href="javascript:")
+            a.dialog-close-btn.iconfont.icon-close(href="javascript:")
+        .dialog-content
+            .selected-list
+            .list-parent
+        .dialog-footer
+            a.finish.btn(href="javascript:") 确定

@@ -130,6 +130,28 @@ textarea
     .info
         padding 0 12px
 
+.image-input
+    position relative
+    box-sizing border-box
+    display inline-block
+    vertical-align top
+    font-size inputFontSize
+    min-height 60px
+    min-width 40px
+    max-width 200px
+
+    .preview
+        display block
+        max-width 100%
+
+    .upload
+        absolute(0, 0, auto, 0)
+        background rgba(#fff, .7)
+        hh(24px)
+        text-align center
+        color cBlue
+        text-decoration none
+
 .date-picker
     btnWidth = 30px
 
@@ -155,7 +177,18 @@ textarea
         border-left 1px solid cInputBorder
         text-decoration none
         line-height (inputHeight - 2px)
-    
+
+.ref-item
+    display inline-block
+    vertical-align top
+
+.entity-digest
+    display inline-block
+    vertical-align middle
+
+.loading-ref
+    display inline-block
+    vertical-align middle
 
 table
     border-top 1px solid cTableBorder
@@ -222,6 +255,7 @@ table
         &.wp100
             display block
             width auto
+            margin-bottom 32px
 
         >.label-area
             h = 30px
@@ -279,4 +313,41 @@ table
         border-bottom 1px solid cBorder
         margin-bottom 8px    
 
+.multiple-input-item
+    removeBtnWidth = 24px
+    moveHandleWidth = 24px
+
+    position relative
+    display inline-block
+    vertical-align top
+    width fieldWidthOne
+    padding-bottom fieldItemSpace // 项之间的距离
+    margin-right fieldItemSpace
+
+    .field-input-parent
+        display block
+        width (fieldWidthOne - removeBtnWidth - moveHandleWidth)
+        margin 0 removeBtnWidth 0 moveHandleWidth
+        
+    .remove-m-input-item, .move-handle
+        position absolute
+        z-index 10
+        display block
+        top 0
+        hh(inputHeight)
+        text-align center
+        text-decoration none
+        color cBlue
+
+    .move-handle
+        width moveHandleWidth
+        left 0
+        
+        &:hover
+            cursor move
+            color cGreen
+
+    .remove-m-input-item
+        width removeBtnWidth
+        right  0
 

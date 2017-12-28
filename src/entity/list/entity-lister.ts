@@ -20,18 +20,29 @@ export class EntityLister {
     private $total: JQuery
     private $fastSearch: JQuery
 
-    constructor(private entityName: string) {
+    private page: EntityValue[]
+
+    constructor(private entityName: string, private forSelect: boolean,
+        onSelect?: (entity: EntityValue) => void) {
+
         this.entityMeta = getMeta().entities[entityName]
         this.decideListFields()
 
         this.$root = $(ST.EntityLister({entityMeta: this.entityMeta,
-            listFieldNames: this.listFieldNames}))
+            listFieldNames: this.listFieldNames,
+            forSelect: this.forSelect}))
 
         this.$listTable = this.$root.mustFindOne(".list-parent table")
         this.setTableWidth()
 
         this.enableSearchAndPaging()
         this.refreshList()
+
+        this.$root.on("click", ".select-entity", e => {
+            const id = $(e.target).mustClosest("tr").mustAttr("id")
+            const entity = this.page.find(v => v._id === id)
+            if (onSelect) onSelect(entity as EntityValue)
+        })
     }
 
     private decideListFields() {
@@ -98,6 +109,8 @@ export class EntityLister {
 
         const q = api.get(`entity/${this.entityName}`, query)
         alertAjaxIfError(q).then(r => {
+            this.page = r.page
+
             this.$pageNo.val(r.pageNo)
             this.$pageSize.val(r.pageSize)
             this.pageNum = Math.ceil(r.total / r.pageSize)
@@ -108,6 +121,7 @@ export class EntityLister {
 
             const jadeCtx = {
                 entityName: this.entityName, entityMeta: this.entityMeta,
+                forSelect: this.forSelect,
                 listFieldNames: this.listFieldNames, page: r.page}
             this.$listTable.append(ST.EntityListTbody(jadeCtx))
         })

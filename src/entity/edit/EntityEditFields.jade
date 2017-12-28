@@ -57,13 +57,15 @@ mixin FieldAction(actions)
                                         label
                                             input(type="radio", value=o.key checked=(fv===o.key))
                                             span=o.value
-                    //- 为了允许清空，File 和 Image 一律当做多值的
+                    //- 为了允许清空，File / Image / Reference 一律当做多值的
                     when "File"
                     when "Image"
+                    when "Reference"
                         .multiple-input.for-fit
                             - var list = fm.multiple ? (JC.makeSureArray(fv) || []) : [fv]
                             each item in list
-                                +MultipleInputItem(fm, item)
+                                if item
+                                    +MultipleInputItem(fm, item)
                     default
                         //- "Text", "Password", "Select", "Check", "Int", "Float"
                         //- "Date", "Time", "DateTime"
@@ -72,5 +74,4 @@ mixin FieldAction(actions)
                             each item in list
                                 +MultipleInputItem(fm, item)
 
-//-     
-//-     "InlineComponent", "PopupComponent", "TabledComponent", "Reference"
+//-  "InlineComponent", "PopupComponent", "TabledComponent"

@@ -9,6 +9,7 @@ import { digestId } from "../index"
 import $ = require("jquery")
 import _ = require("lodash")
 import Sortable = require("sortablejs")
+import { selectEntity } from "../select/index"
 
 function decideFinalOptions(entityMeta: EntityMeta) {
     const fieldNames = Object.keys(entityMeta.fields)
@@ -128,27 +129,69 @@ class EntityEditForm {
             const $file = $fileInput.mustFindOne(".file")
             const $info = $fileInput.mustFindOne(".info")
 
-            $file.off("change").on("change", function() {
-                $info.html("上传中...")
-                upload($file, r => {
-                    if (!r) return
-                    const $inputItem
-                        = $fileInput.mustClosest(".multiple-input-item")
-                    const fm = getFieldMetaOfMyField($inputItem)
-                    for (const fv of r) {
-                        $inputItem.before(ST.MultipleInputItem({fm, fv}))
-                    }
-                    $inputItem.remove()
-                })
-                $file.val("")
-            })
-            $file.click()
+            uploadFileOrImage($fileInput, $file, $info)
+        })
+
+        // 图片上传
+        $fields.on("click", ".image-input .upload", function() {
+            const $fileInput = $(this).mustClosest(".image-input")
+            const $file = $fileInput.mustFindOne(".file")
+            const $status = $fileInput.mustFindOne(".status")
+
+            uploadFileOrImage($fileInput, $file, $status)
+        })
+
+        // 编辑
+        $fields.on("click", ".label-actions .edit", e => {
+            const $field = $(e.target).mustClosest(".field")
+            const fieldName = $field.mustAttr("field-name")
+            const fieldMeta = this.entityMeta.fields[fieldName]
+            // 编辑引用
+            if (fieldMeta.inputType === "Reference") {
+                editReference($field, fieldMeta)
+            }
         })
     }
 
     getInput() {
         this.$root.find("")
     }
+}
+
+function editReference($field: JQuery, fieldMeta: FieldMeta) {
+    const ids: string[] = []
+    const $mi = $field.mustFindOne(".multiple-input")
+    $mi.find(".multiple-input-item").iterate($i => {
+        const id = $i.mustFindOne(".entity-digest:first").mustAttr("id")
+        ids.push(id)
+    })
+
+    selectEntity(fieldMeta, ids, (newIds, idToInfo) => {
+        $mi.empty()
+        for (const id of newIds) {
+            const info = idToInfo[id]
+            if (!info) continue
+            $mi.append(ST.MultipleInputItem({fv: info.digest, fm: fieldMeta}))
+        }
+    })
+}
+
+function uploadFileOrImage($input: JQuery, $file: JQuery, $status: JQuery) {
+    $file.off("change").on("change", function() {
+        $status.html("上传中...")
+        upload($file, r => {
+            if (!r) return
+            const $inputItem
+                = $input.mustClosest(".multiple-input-item")
+            const fm = getFieldMetaOfMyField($inputItem)
+            for (const fv of r) {
+                $inputItem.before(ST.MultipleInputItem({fm, fv}))
+            }
+            $inputItem.remove()
+        })
+        $file.val("")
+    })
+    $file.click()
 }
 
 function getFieldMetaOfMyField($from: JQuery) {

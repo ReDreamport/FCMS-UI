@@ -39,50 +39,14 @@ declare const ST: {
     EditEntityPage: STFunc;
     MultipleInputItem: STFunc;
     EntityEditFields: STFunc;
+    SelectEntityDialog: STFunc;
+    EntityDigest: STFunc;
+    LoadingRef: STFunc;
     //
     DatePicker: STFunc;
     RichTextEditorDialog: STFunc;
     PageSwitch: STFunc;
     MenuItems: STFunc;
-    //
-    ListEntity: STFunc;
-    ListEntityTable: STFunc;
-    ListEntityTbody: STFunc;
-    EntityListPaging: STFunc;
-    CheckColumns: STFunc;
-    EntityDigest: STFunc;
-    FilterItem: STFunc;
-    FilterOperatorOption: STFunc;
-    FilterInput: STFunc;
-    ViewEntity: STFunc;
-    ViewEntityFields: STFunc;
-    EditEntity: STFunc;
-    Form: STFunc;
-    Field: STFunc;
-    Check: STFunc;
-    CheckList: STFunc;
-    CheckListItem: STFunc;
-    CheckListGroup: STFunc;
-    Date: STFunc;
-    DateTime: STFunc;
-    File: STFunc;
-    FileItem: STFunc;
-    Float: STFunc;
-    Image: STFunc;
-    ImageItem: STFunc;
-    InlineComponent: STFunc;
-    Int: STFunc;
-    JSON: STFunc;
-    Password: STFunc;
-    PopupComponent: STFunc;
-    PopupComponentItem: STFunc;
-    Reference: STFunc;
-    ReferenceItem: STFunc;
-    RichText: STFunc;
-    Select: STFunc;
-    Text: STFunc;
-    TextArea: STFunc;
-    Time: STFunc;
 }
 
 declare const CKEDITOR: any
@@ -115,7 +79,7 @@ interface FilePath {
 }
 
 interface EntityValue {
-    _id?: string
+    _id: string
     [k: string]: any
 }
 
@@ -149,7 +113,9 @@ interface EntityMeta {
     label: string
     system: boolean
     displayGroup?: string
-    digestFields?: string
+    digestConfig?: string
+    fieldsForDigest?: string[]
+    iconField?: string
     editEnhanceFunc?: string
     db: string
     dbName: string
@@ -184,4 +150,10 @@ declare const wangEditor: any
 
 interface MetaStore {
     entities: {[entityName: string]: EntityMeta}
+}
+
+interface DigestInfo {
+    id: string
+    icon?: string
+    digest: string
 }

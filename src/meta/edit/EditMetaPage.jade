@@ -25,14 +25,15 @@ include ../../mixin
             .row
                 +Field("displayGroup", "显示分组")
                     input(type="text", value=entityMeta.displayGroup)
-                +Field("digestFields", "摘要字段", "竖线分隔")
-                    - var df = entityMeta.digestFields && entityMeta.digestFields.join && entityMeta.digestFields.join("|") || ""
-                    input(type="text", value=df)
+                +Field("iconField", "图标字段")
+                    input(type="text", value=entityMeta.iconField)
+                +Field("digestConfig", "摘要配置", "例：icon&name|username")
+                    input(type="text", value=entityMeta.digestConfig)
                 +Field("editEnhanceFunc", "编辑增强脚本名")
                     input(type="text", value=entityMeta.editEnhanceFunc)
                 +Field("viewEnhanceFunc", "详情增强脚本名")
                     input(type="text", value=entityMeta.viewEnhanceFunc)
-        
+
         .section
             .section-title 存储
             .row

@@ -73,7 +73,7 @@ export function formatDate(v: any, format: string) {
 
 export function fileObjectToLink(obj: UploadResult) {
     const path = obj && obj.path
-    return path && ("/r/" + path) || "javascript:"
+    return path && ("/r/" + path) || ""
 }
 
 export function fileObjectToInfo(obj: UploadResult | null | undefined) {

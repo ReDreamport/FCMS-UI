@@ -1,11 +1,15 @@
 tbody
     each item in page
-        tr
-            td.align-center
-                input.check-row(type="checkbox")
-            td.align-center
-                a.view-entity.btn(href="/#!view/#{entityName}/#{item._id}") 详情
-                a.edit-entity.btn(href="/#!edit/#{entityName}/#{item._id}") 编辑
+        tr(id=item._id)
+            if forSelect
+                td.align-center
+                    a.select-entity.btn(href="javascript:") 选择
+            else
+                td.align-center
+                    input.check-row(type="checkbox")
+                td.align-center
+                    a.view-entity.btn(href="/#!view/#{entityName}/#{item._id}") 详情
+                    a.edit-entity.btn(href="/#!edit/#{entityName}/#{item._id}") 编辑
             each fn in listFieldNames
                 - var fieldMeta = entityMeta.fields[fn]
                 - var fieldValue = item[fn]
