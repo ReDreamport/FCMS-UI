@@ -1,5 +1,8 @@
 import _ = require("lodash")
+
+import { pLoadEntityByIds } from "../../api"
 import { fileObjectToLink, formatDate } from "../../common"
+import { getMeta } from "../../globals"
 
 export function digestEntity(entityMeta: EntityMeta,
     entityValue: EntityValue): DigestInfo {
@@ -36,6 +39,8 @@ export function digestEntity(entityMeta: EntityMeta,
         digest = groupValues.join(" | ")
     }
 
+    digest = digest || entityValue._id
+
     return {icon: iconValue, digest, id: entityValue._id}
 }
 
@@ -69,4 +74,32 @@ function fieldValueToString(fieldMeta: FieldMeta, fieldValue: any) {
     }
 
     return values.join(", ")
+}
+
+export function loadReferences($from: JQuery) {
+    const tasks: {[entityName: string]: {[id: string]: JQuery[]}} = {}
+    $from.find(".loading-ref").iterate($lr => {
+        const entityName = $lr.mustAttr("entityName")
+        const id = $lr.mustAttr("id")
+        const taskByEntity = (tasks[entityName] = tasks[entityName] || {})
+        const refsOfId = (taskByEntity[id] = taskByEntity[id] || [])
+        refsOfId.push($lr)
+    })
+
+    const entityNames = Object.keys(tasks)
+    for (const entityName of entityNames) {
+        const entityMeta = getMeta().entities[entityName]
+        const tasksByEntity = tasks[entityName]
+        const ids = Object.keys(tasksByEntity)
+
+        pLoadEntityByIds(entityName, ids).then(r => {
+            for (const entityValue of r.page) {
+                const digest = digestEntity(entityMeta, entityValue)
+                const $lrList = tasksByEntity[entityValue._id]
+                for (const $lr of $lrList) {
+                    $lr.replaceWith(ST.EntityDigest(digest))
+                }
+            }
+        })
+    }
 }

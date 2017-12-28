@@ -1,6 +1,31 @@
 @import "../../mixin"
     
-.page.page-edit-entity
+.page-parent>.page.page-edit-entity
+    topActionsHeight = 60px
+
+    box-sizing border-box
+    height 100%
+    overflow hidden
+
+    .entity-edit-form.mc-form
+        box-sizing border-box
+        height 100%
+        overflow auto
+        padding-bottom topActionsHeight
+
+    .page-actions
+        absolute(auto, 0, 0, 0)
+        z-index 10
+        background #fff
+        text-align center
+        hh(topActionsHeight)
+        border-top 1px solid cBorder
+
+        .btn
+            hh(36px)
+            width 250px
+            font-size 14px
+
     .field >.label-area >.label
         font-weight 500
         font-size 14px

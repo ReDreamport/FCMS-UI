@@ -6,7 +6,7 @@ import Sortable = require("sortablejs")
 import { getMeta } from "../../globals"
 import { EntityLister } from "../list/entity-lister"
 
-import { alertAjaxIfError, api } from "../../api"
+import { pLoadEntityByIds } from "../../api"
 import { initDialog } from "../../dialog"
 import { digestEntity } from "../digest"
 
@@ -31,11 +31,7 @@ export function selectEntity(fieldMeta: FieldMeta, ids: string[],
 
     const $selectedList = $overlay.mustFindOne(".selected-list")
 
-    const criteria = {field: "_id", operator: "in", value: ids}
-    const query = {_digest: true, _pageSize: -1,
-        _criteria: JSON.stringify(criteria)}
-    const q = api.get("entity/" + entityName, query)
-    alertAjaxIfError(q).then(r => {
+    pLoadEntityByIds(entityName, ids).then(r => {
         // 构造摘要信息
         for (const entity of r.page) {
             const digest = digestEntity(entityMeta, entity)

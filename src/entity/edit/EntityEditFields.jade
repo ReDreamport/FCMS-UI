@@ -9,7 +9,7 @@ mixin FieldAction(actions)
         a.empty.btn.iconfont.icon-delete2(href="javascript:")
 
 //- inline block 字段
-.section
+.section.inline-fields
     each fn in inlineFieldNames
         - var fm = entityMeta.fields[fn]
         - var fv = entityValue[fn]
@@ -20,7 +20,7 @@ mixin FieldAction(actions)
             .tip=tip
 
  //- block 字段
-.section
+.section.block-fields
     each fn in blockFieldNames
         - var fm = entityMeta.fields[fn]
         - var fv = entityValue[fn]

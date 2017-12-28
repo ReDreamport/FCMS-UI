@@ -1,15 +1,20 @@
 // cSpell:words sortablejs
 
-import { alertAjaxIfError, api, upload } from "../../api"
-import { SYSTEM_FIELDS } from "../../common"
-import { getMeta } from "../../globals"
-import { Page } from "../../page"
-import { digestId } from "../index"
-
 import $ = require("jquery")
+import json5 = require("json5")
 import _ = require("lodash")
 import Sortable = require("sortablejs")
-import { selectEntity } from "../select/index"
+
+import { alertAjaxIfError, api, upload } from "../../api"
+import { collectInputByFieldName, collectSimpleInput,
+    SYSTEM_FIELDS } from "../../common"
+import { getMeta } from "../../globals"
+import { Page } from "../../page"
+import { closeByKey } from "../../router"
+import { toastError, toastSuccess } from "../../toast"
+import { loadReferences } from "../digest"
+import { digestId } from "../index"
+import { selectEntity } from "../select"
 
 function decideFinalOptions(entityMeta: EntityMeta) {
     const fieldNames = Object.keys(entityMeta.fields)
@@ -37,6 +42,8 @@ function fieldMetaToActions(fieldMeta: FieldMeta)
     const type = fieldMeta.type
     const inputType = fieldMeta.inputType
     if (type === "Reference") {
+        return {edit: true, empty: true}
+    } else if ((type === "File" || type === "Image") && !fieldMeta.multiple) {
         return {edit: true, empty: true}
     } else if (inputType === "CheckList") {
         return {}
@@ -95,6 +102,9 @@ class EntityEditForm {
 
         const $fields = $(ST.EntityEditFields(jadeCtx)).appendTo(this.$root)
 
+        // 加载关联实体
+        loadReferences($fields)
+
         // 多值排序
         $fields.find(".multiple-input").iterate($multiple => {
             Sortable.create($multiple[0], {handle: ".move-handle",
@@ -149,12 +159,92 @@ class EntityEditForm {
             // 编辑引用
             if (fieldMeta.inputType === "Reference") {
                 editReference($field, fieldMeta)
+            } else if (fieldMeta.type === "Image") {
+                const $multipleInput
+                    = $field.mustFindOne(".multiple-input:first")
+                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+                $multipleInput.mustFindOne(".image-input .upload").click()
+            } else if (fieldMeta.type === "File") {
+                const $multipleInput
+                    = $field.mustFindOne(".multiple-input:first")
+                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+                $multipleInput.mustFindOne(".file-input .upload").click()
             }
         })
     }
 
     getInput() {
-        this.$root.find("")
+        const $inlineFields = this.$root.mustFindOne(".section.inline-fields")
+        const entity = collectInputByFieldName($inlineFields)
+
+        this.$root.find(".section.block-fields .field").iterate($f => {
+            const fieldName = $f.mustAttr("field-name")
+            const entityName = $f.mustAttr("entity-name")
+            const fieldMeta = getMeta().entities[entityName].fields[fieldName]
+            const inputType = fieldMeta.inputType
+            const type = fieldMeta.type
+
+            // 先当多值处理
+            const list: any[] = []
+
+            if (inputType === "RichText") {
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = $fi.mustFindOne(".preview-area").html()
+                    if (!_.isNil(value)) list.push(value)
+                })
+            } else if (inputType === "Check") {
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = $fi.mustFindOne("input").prop("checked")
+                    list.push(value)
+                })
+            } else if (inputType === "CheckList") {
+                // 一律当 string 处理，由服务器转格式
+                $f.find("input:checked").iterate($fi => {
+                    list.push($fi.val())
+                })
+            } else if (type === "Object") {
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = $fi.mustFindOne("textarea").stringInput()
+                    console.log("JSON", value)
+                    if (!value) return
+                    try {
+                       const json = json5.parse(value)
+                       list.push(json)
+                    } catch (e) {
+                        throw new Error("JSON对象格式错误")
+                    }
+                })
+            } else if (type === "File" || type === "Image") {
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = $fi.mustFindOne(".fi-input").attr("value")
+                    if (!value) return
+                    const json = json5.parse(value)
+                    list.push(json)
+                })
+            } else if (type === "Reference") {
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = $fi.find(".ref-item").attr("id")
+                    if (value) list.push(value)
+                })
+            } else {
+                // "Text", "Password", "TextArea", "Int", "Float", 
+                // "Date", "Time", "DateTime"
+                // "Select" 一律当 string 处理，由服务器转格式
+                $f.find(".field-input-parent").iterate($fi => {
+                    const value = collectSimpleInput($fi)
+                    if (!_.isNil(value)) list.push(value)
+                })
+            }
+
+            if (fieldMeta.multiple) {
+                entity[fieldName] = list
+            } else {
+                entity[fieldName] = list.length ? list[0] : null
+            }
+        })
+
+        console.log(entity)
+        return entity
     }
 }
 
@@ -226,10 +316,23 @@ class CreateEditEntity extends Page {
     }
 
     private save() {
-        this.rootForm.getInput()
+        let inputEntity: any
+        try {
+            inputEntity = this.rootForm.getInput()
+        } catch (e) {
+            toastError(e.message)
+            return
+        }
+        const q = this.entityValue && this.entityValue._id
+            ? api.put(`entity/${this.entityName}/${this.entityValue._id}`,
+                inputEntity)
+            : api.post(`entity/${this.entityName}`, inputEntity)
+        alertAjaxIfError(q).then(() => {
+            toastSuccess("保存成功！")
+            closeByKey(this.routeCtx.path)
+        })
     }
 }
-
 export class EditEntity extends CreateEditEntity {
     pLoadData() {
         const entityName = this.routeCtx.params.entityName

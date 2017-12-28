@@ -45,6 +45,8 @@ export function extend() {
                 //     return this.find("option:first").attr("value")
                 // }
                 return this.val()
+            } else if (this.is("textarea")) {
+                return this.val()
             }
         },
         isChecked(): boolean {

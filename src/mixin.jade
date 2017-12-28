@@ -68,14 +68,14 @@ mixin FieldInputItem(fm, fv)
                     input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD HH:mm:ss"))
                     a.open-calendar.iconfont.icon-calendar(href="javascript:")
             when "File"
-                .file-input(value=fv&&JSON.stringify(fv))
+                .file-input.fi-input(value=fv&&JSON.stringify(fv))
                     input.file.hidden(type="file", multiple=fm.multiple)
                     - var title = fv && ((fv.name || "下载") + ("[" + JC.showFileSize(fv.size) + "]")) || "（无）"
                     span.info=JC.fileObjectToInfo(fv)
                     a.download.iconfont.icon-download(href=JC.fileObjectToLink(fv)||"javascript:", target="_blank")
                     a.upload.iconfont.icon-upload(href="javascript:")
             when "Image"
-                .image-input(value=fv&&JSON.stringify(fv))
+                .image-input.fi-input(value=fv&&JSON.stringify(fv))
                     input.file.hidden(type="file", multiple=fm.multiple)
                     - var src = JC.fileObjectToLink(fv)
                     if src
@@ -84,10 +84,10 @@ mixin FieldInputItem(fm, fv)
                     .status
             when "Reference"
                 if (typeof fv === "string")
-                    .ref-item
-                        +LoadingRef(fm.refEnttiy, fv)
+                    .ref-item(id=fv)
+                        +LoadingRef(fm.refEntity, fv)
                 else if fv && fv.id
-                    .ref-item(value=JSON.stringify(fv))
+                    .ref-item(id=fv.id)
                         +EntityDigest(fv.icon, fv.digest, fv.id)
             when "InlineComponent"
                 .inline-component

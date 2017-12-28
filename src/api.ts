@@ -146,3 +146,12 @@ function failHandler() {
 export const apiRoot = "/api/"
 
 export const api = new Relative(apiRoot)
+
+export function pLoadEntityByIds(entityName: string, ids: string[]) {
+    const criteria = {field: "_id", operator: "in", value: ids}
+    const query = {_digest: true, _pageSize: -1,
+        _criteria: JSON.stringify(criteria)}
+
+    const q = api.get(`entity/${entityName}`, query)
+    return alertAjaxIfError(q)
+}

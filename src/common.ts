@@ -128,11 +128,45 @@ export function collectInputByFieldName($form: JQuery, fieldClass?: string) {
 
         const fieldName = $f.attr("field-name")
         if (!fieldName) return
-        const $input = $f.find(":input")
-        inputData[fieldName] = $input.typedInput()
+        inputData[fieldName] = collectSimpleInput($f)
     })
 
     return inputData
+}
+
+// 日期输出为 long
+export function collectSimpleInput($f: JQuery) {
+    if ($f.length === 0) return null
+    if ($f.length > 1) throw new Error("Bad field length " + $f.length)
+
+    const $dp = $f.find(".date-picker")
+    if ($dp.length) {
+        return getDateInputAsLong($dp)
+    } else {
+        const $input = $f.find(":input")
+        return $input.typedInput()
+    }
+}
+
+function getDateInputAsLong($dp: JQuery) {
+    const str = $dp.find("input").stringInput()
+    if (!str) return null
+    const type = $dp.mustAttr("type")
+    let m: moment.Moment
+    if (type === "Date") {
+        m = moment(str, "YYYY-MM-DD")
+    } else if (type === "Time") {
+        m = moment(str, "HH:mm:ss")
+    } else if (type === "DateTime") {
+        m = moment(str, "YYYY-MM-DD HH:mm:ss")
+    } else {
+        throw new Error("No date type")
+    }
+    if (m.isValid()) {
+        return m.valueOf()
+    } else {
+        throw new Error("时间输入错误：" + str)
+    }
 }
 
 export function isEnterKey(e: JQuery.Event) {
