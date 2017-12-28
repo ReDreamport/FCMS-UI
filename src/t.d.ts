@@ -42,6 +42,9 @@ declare const ST: {
     SelectEntityDialog: STFunc;
     EntityDigest: STFunc;
     LoadingRef: STFunc;
+    ComponentItem: STFunc;
+    DisplayFieldItem: STFunc;
+    EditComponentDialog: STFunc;
     //
     DatePicker: STFunc;
     RichTextEditorDialog: STFunc;

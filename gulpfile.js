@@ -1,4 +1,6 @@
-// cSpell:words typescriptifier tsify beepbeep styl
+// cSpell:words typescriptifier tsify beepbeep styl sortablejs
+
+// http://blog.revathskumar.com/2016/02/browserify-separate-app-and-vendor-bundles.html
 
 const gulp = require('gulp')
 const plumber = require("gulp-plumber")
@@ -24,21 +26,38 @@ const cleanCss = require("gulp-clean-css")
 
 const hash = require("gulp-hash-src")
 
+const uglify = require('gulp-uglify')
+
 function errorHandler(err) {
     beep(2)
     console.error(err.toString())
 }
 
+const vendors = ["jquery", "json5", "lodash", "moment", "page", "sortablejs"]
+
+gulp.task('vendor', () => {
+    const b = browserify({debug: true})
+    vendors.forEach(lib => { b.require(lib) })
+  
+    b.bundle()
+    .pipe(source('vendor.js'))
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(gulp.dest('build'))
+  })
+
 gulp.task('ts', function () {
-    browserify()
-        .add('src/index.ts')
-        .plugin(tsify, {})
-        .transform(babelify, { extensions: ['.ts'] })
-        .bundle()
-        .on('error', errorHandler)
-        .pipe(source("app.js"))
-        .pipe(buffer())
-        .pipe(gulp.dest("build"))
+    browserify({
+    })
+    .add('src/index.ts')
+    .external(vendors)
+    .plugin(tsify, {})
+    .transform(babelify, { extensions: ['.ts'] })
+    .bundle()
+    .on('error', errorHandler)
+    .pipe(source("app.js"))
+    .pipe(buffer())
+    .pipe(gulp.dest("build"))
 })
 
 gulp.task("tslint", () =>
@@ -101,7 +120,7 @@ gulp.task("img", function () {
 
 gulp.task("hash", function() {
     return gulp.src(["build/index-tmp.html"])
-        .pipe(hash({build_dir: "build", src_path: "src", hash_len: 6}))
+        .pipe(hash({build_dir: "build", src_path: "src"}))
         .pipe(rename("index.html"))
         .pipe(gulp.dest("./build"))
 })
@@ -120,4 +139,4 @@ gulp.task("watch", ["default"], function () {
     gulp.watch('img/**', ["img"])
 })
 
-gulp.task("default", sequence("tslint", ["index", "ts", "template", "stylus"], ["lib", "img"], "hash"))
+gulp.task("default", sequence("tslint", ["index", "vendor", "ts", "template", "stylus"], ["lib", "img"], "hash"))

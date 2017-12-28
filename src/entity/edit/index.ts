@@ -43,7 +43,8 @@ function fieldMetaToActions(fieldMeta: FieldMeta)
     const inputType = fieldMeta.inputType
     if (type === "Reference") {
         return {edit: true, empty: true}
-    } else if ((type === "File" || type === "Image") && !fieldMeta.multiple) {
+    } else if ((type === "File" || type === "Image" || type === "Component")
+        && !fieldMeta.multiple) {
         return {edit: true, empty: true}
     } else if (inputType === "CheckList") {
         return {}
@@ -52,8 +53,6 @@ function fieldMetaToActions(fieldMeta: FieldMeta)
     } else {
         return {}
     }
-    // "File", "Image",
-    // "InlineComponent", "PopupComponent", "TabledComponent", "Reference"
 }
 
 class EntityEditForm {
@@ -117,15 +116,29 @@ class EntityEditForm {
             const fieldName = $field.mustAttr("field-name")
             const entityName = $field.mustAttr("entity-name")
             const fieldMeta = getMeta().entities[entityName].fields[fieldName]
-            const $multipleInput = $field.mustFindOne(".multiple-input:first")
 
-            $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+            if (fieldMeta.type === "Component") {
+                const itemCtx = {entityName: fieldMeta.refEntity,
+                    multiple: true, itemValue: {}}
+                $field.mustFindOne("table.component-list tbody:first")
+                    .append(ST.ComponentItem(itemCtx))
+            } else {
+                const $multipleInput
+                    = $field.mustFindOne(".multiple-input:first")
+                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+            }
         })
 
         // 多值，清空
         $fields.on("click", ".label-actions .empty", e => {
-            $(e.target).mustClosest(".field")
-                .mustFindOne(".multiple-input:first").empty()
+            const $mi = $(e.target).mustClosest(".field")
+                .mustFindOne(".multiple-input:first")
+            const $comTbody = $mi.find(">table.component-list tbody:first")
+            if ($mi.find(">table.component-list")) {
+                $comTbody.empty()
+            } else {
+                $mi.empty()
+            }
         })
 
         // 多值，删除一项
@@ -154,23 +167,39 @@ class EntityEditForm {
         // 编辑
         $fields.on("click", ".label-actions .edit", e => {
             const $field = $(e.target).mustClosest(".field")
-            const fieldName = $field.mustAttr("field-name")
-            const fieldMeta = this.entityMeta.fields[fieldName]
-            // 编辑引用
-            if (fieldMeta.inputType === "Reference") {
-                editReference($field, fieldMeta)
-            } else if (fieldMeta.type === "Image") {
-                const $multipleInput
-                    = $field.mustFindOne(".multiple-input:first")
-                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
-                $multipleInput.mustFindOne(".image-input .upload").click()
-            } else if (fieldMeta.type === "File") {
-                const $multipleInput
-                    = $field.mustFindOne(".multiple-input:first")
-                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
-                $multipleInput.mustFindOne(".file-input .upload").click()
-            }
+            this.editField($field)
         })
+
+        // 删除引用行
+        $fields.on("click", ".remove-row", e => {
+            $(e.target).mustClosest("tr").remove()
+        })
+    }
+
+    editField($field: JQuery) {
+        const fieldName = $field.mustAttr("field-name")
+        const fieldMeta = this.entityMeta.fields[fieldName]
+        const $multipleInput = $field.mustFindOne(".multiple-input:first")
+        // 编辑引用
+        if (fieldMeta.inputType === "Reference") {
+            editReference($multipleInput, fieldMeta)
+        } else if (fieldMeta.type === "Image") { // 单值
+            if (!$multipleInput.find(".image-input").length)
+                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+            $multipleInput.mustFindOne(".image-input .upload").click()
+        } else if (fieldMeta.type === "File") { // 单值
+            if (!$multipleInput.find(".image-input").length)
+                $multipleInput.append(ST.MultipleInputItem({fm: fieldMeta}))
+            $multipleInput.mustFindOne(".file-input .upload").click()
+        } else if (fieldMeta.type === "Component") { // 单值
+            if (!$multipleInput.find("tbody:first tr").length) {
+                const itemCtx = {entityName: fieldMeta.refEntity,
+                    multiple: false, itemValue: {}}
+                $field.mustFindOne("table.component-list tbody:first")
+                    .append(ST.ComponentItem(itemCtx))
+            }
+            $multipleInput.mustFindOne(".edit").click()
+        }
     }
 
     getInput() {
@@ -248,9 +277,8 @@ class EntityEditForm {
     }
 }
 
-function editReference($field: JQuery, fieldMeta: FieldMeta) {
+function editReference($mi: JQuery, fieldMeta: FieldMeta) {
     const ids: string[] = []
-    const $mi = $field.mustFindOne(".multiple-input")
     $mi.find(".multiple-input-item").iterate($i => {
         const id = $i.mustFindOne(".entity-digest:first").mustAttr("id")
         ids.push(id)

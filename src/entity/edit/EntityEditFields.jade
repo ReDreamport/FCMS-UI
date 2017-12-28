@@ -50,12 +50,12 @@ mixin FieldAction(actions)
                                     - var vList = JC.makeSureArray(fv) || []
                                     each o in fm.finalOptions
                                         label
-                                            input(type="checkbox", value=o.key checked=(vList.indexOf(o.key) >=0))
+                                            input(type="checkbox", value=o.key, checked=(vList.indexOf(o.key) >=0))
                                             span=o.value
                                 else
                                     each o in fm.finalOptions
                                         label
-                                            input(type="radio", value=o.key checked=(fv===o.key))
+                                            input(type="radio", value=o.key, checked=(fv===o.key))
                                             span=o.value
                     //- 为了允许清空，File / Image / Reference 一律当做多值的
                     when "File"
@@ -66,6 +66,11 @@ mixin FieldAction(actions)
                             each item in list
                                 if item
                                     +MultipleInputItem(fm, item)
+                    when "InlineComponent"
+                    when "PopupComponent"
+                        .multiple-input.for-wide
+                            - var values = fm.multiple ? (fv || []) : [fv]
+                            +ComponentList(fm.refEntity, fm.multiple, values)
                     default
                         //- "Text", "Password", "Select", "Check", "Int", "Float"
                         //- "Date", "Time", "DateTime"
@@ -73,5 +78,3 @@ mixin FieldAction(actions)
                             - var list = JC.makeSureArray(fv) || []
                             each item in list
                                 +MultipleInputItem(fm, item)
-
-//-  "InlineComponent", "PopupComponent", "TabledComponent"

@@ -62,7 +62,8 @@ export function extend() {
         },
         mustFindOne(selector: string) {
             const $r = this.find(selector)
-            if ($r.length !== 1) throw new Error("NotOne " + selector)
+            if ($r.length === 0) throw new Error("No " + selector)
+            if ($r.length > 1) throw new Error("More than one " + selector)
             return $r
         },
         mustClosest(selector: string) {

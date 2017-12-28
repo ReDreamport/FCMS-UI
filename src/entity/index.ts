@@ -37,3 +37,16 @@ export function digestId(id?: string) {
     else
         return ""
 }
+
+export function displayField(fieldMeta: FieldMeta, fieldValue: any) {
+    if (fieldMeta.multiple) {
+        fieldValue = fieldValue || []
+        const list = []
+        for (const item of fieldValue) {
+            list.push(ST.DisplayFieldItem({fieldMeta, fieldValue: item}))
+        }
+        return list.join(", ")
+    } else {
+        return ST.DisplayFieldItem({fieldMeta, fieldValue})
+    }
+}

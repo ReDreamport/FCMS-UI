@@ -29,6 +29,7 @@
     "gulp-sequence": "^0.4.6",
     "gulp-stylus": "^2.6.0",
     "gulp-tslint": "^8.1.2",
+    "gulp-uglify": "^3.0.0",
     "tsify": "^3.0.3",
     "tslint": "^5.8.0",
     "typescript": "^2.5.3",

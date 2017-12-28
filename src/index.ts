@@ -7,7 +7,8 @@ import { fileObjectToInfo, fileObjectToLink, formatDate, isSortableField,
     makeSureArray, showFileSize, uniqueId } from "./common"
 import { showDatePicker } from "./date-picker"
 import { showRichEditorDialog } from "./dialog/index"
-import { digestId, getColumnStyle } from "./entity"
+import { digestId, displayField, getColumnStyle } from "./entity"
+import { decideListFields } from "./entity/component"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
 import { pInitMenu } from "./menu"
@@ -56,7 +57,9 @@ function initJadeContext() {
         fileObjectToInfo,
         digestId,
         makeSureArray,
-        showFileSize
+        showFileSize,
+        decideListFields,
+        displayField
     }
 }
 

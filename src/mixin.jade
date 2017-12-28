@@ -89,10 +89,6 @@ mixin FieldInputItem(fm, fv)
                 else if fv && fv.id
                     .ref-item(id=fv.id)
                         +EntityDigest(fv.icon, fv.digest, fv.id)
-            when "InlineComponent"
-                .inline-component
-            when "PopupComponent"
-                .popup-component
             
 mixin MultipleInputItem(fm, fv)
     .multiple-input-item
@@ -109,3 +105,65 @@ mixin EntityDigest(icon, digest, id)
 
 mixin LoadingRef(refEntity, id)
     .loading-ref(entityName=refEntity, id=id)=id
+
+mixin DisplayFieldItem(fieldMeta, fieldValue)
+    if fieldValue === null || fieldValue === undefined
+        | 
+    else
+        //- TODO input type == select
+        case fieldMeta.type
+            when 'Object'
+            when 'Component'
+                | ...
+            when 'Float'
+                |=fieldValue && fieldValue.toPrecision(3)
+            when 'Date'
+                | #{JC.formatDate(fieldValue, "YY-MM-DD")}
+            when 'Time'
+                | #{JC.formatDate(fieldValue, "HH:mm:ss")}
+            when 'DateTime'
+                | #{JC.formatDate(fieldValue, "YY-MM-DD HH:mm:ss")}
+            when 'Boolean'
+                if fieldValue === true
+                    i.iconfont.icon-correct
+            when 'File'
+                - var path = JC.fileObjectToLink(fieldValue)
+                if path
+                    a(href=path, target="_blank") 下载
+            when 'Image'
+                - var path = JC.fileObjectToLink(fieldValue)
+                if path
+                    img.resource(src=path)
+            when 'Reference'
+                if fieldValue
+                    a.loading-ref(href=`/#!view/${fieldMeta.refEntity}${fieldValue}`,
+                        entityName=fieldMeta.refEntity, id=fieldValue)=JC.digestId(fieldValue)
+            default
+                span!=fieldValue
+
+mixin ComponentList(entityName, multiple, values)
+    table.component-list
+        - var listFieldNames = JC.decideListFields(entityName)
+        - var entityMeta = JC.getMeta().entities[entityName]
+        - var fields = entityMeta.fields
+        //- console.log(listFieldNames, fields)
+        thead
+            th(style="width: 108px;")
+            each fn in listFieldNames
+                - var fieldMeta = fields[fn]
+                th(style=JC.getColumnStyle(fieldMeta))=fieldMeta.label
+        tbody
+            each item in values
+                +ComponentItem(entityName, multiple, item)
+
+mixin ComponentItem(entityName, multiple, itemValue)
+    tr
+        - var listFieldNames = JC.decideListFields(entityName)
+        - var entityMeta = JC.getMeta().entities[entityName]
+        td.align-center(style="width: 108px;")
+            a.edit.btn(hrer="javascript:") 编辑
+            a.remove-row.btn(href="javascript:") 删除
+        each fn in listFieldNames
+            - var fieldMeta = entityMeta.fields[fn]
+            - var fieldValue = itemValue && itemValue[fn]
+            td(style=JC.getColumnStyle(fieldMeta))!=JC.displayField(fieldMeta, fieldValue)
