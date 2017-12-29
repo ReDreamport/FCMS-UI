@@ -14,7 +14,7 @@ const opens: { [s: string]: Page } = {}
 const openOrders: string[] = []
 
 export function initRouter() {
-    PageClasses["/meta"] = ListMeta
+    PageClasses["/call/meta"] = ListMeta
     PageClasses["/meta/entity/:entityName"] = EditMeta
     PageClasses["/meta/entity-add"] = CreateMeta
 

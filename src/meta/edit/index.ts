@@ -6,7 +6,6 @@ import Sortable = require("sortablejs")
 
 import { alertAjaxIfError, api } from "../../api"
 import { cloneByJSON, collectInputByFieldName } from "../../common"
-import { getMeta } from "../../globals"
 import { Page } from "../../page"
 import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
@@ -137,7 +136,7 @@ export class CreateEditMeta extends Page {
         alertAjaxIfError(q).then(() => {
             toastSuccess("保存成功!")
             closeByKey(this.routeCtx.path)
-            $(".page.page-list-meta .refresh-list").click()
+            setTimeout(() => {location.reload()}, 100)
         })
     }
 
@@ -218,12 +217,13 @@ export class CreateEditMeta extends Page {
 }
 
 export class EditMeta extends CreateEditMeta {
-    pBuild() {
+    pLoadData() {
         this.entityName = this.routeCtx.params.entityName
-        this.entityMeta = getMeta().entities[this.entityName]
-
+        const q = api.get(`meta/entity/${this.entityName}`)
+        return alertAjaxIfError(q).then(em => this.entityMeta = em)
+    }
+    pBuild() {
         this.setTitle(this.entityName)
-
         return super.pBuild()
     }
 }

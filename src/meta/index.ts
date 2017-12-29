@@ -10,16 +10,18 @@ function decideFinalOptions(entityMeta: EntityMeta) {
         const fieldMeta = entityMeta.fields[fn]
         const options: KeyValuePair[] = []
 
+        delete fieldMeta.finalOptions
+
         if (fieldMeta.textOptions && fieldMeta.textOptions.length) {
             for (const o of fieldMeta.textOptions) {
                 options.push({key: o, value: o})
             }
+            fieldMeta.finalOptions = options
         } else if (fieldMeta.kvOptions && fieldMeta.kvOptions.length) {
             for (const o of fieldMeta.kvOptions) {
                options.push(o)
             }
+            fieldMeta.finalOptions = options
         }
-
-        fieldMeta.finalOptions = options
     }
 }

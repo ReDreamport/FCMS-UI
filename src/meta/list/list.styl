@@ -3,6 +3,52 @@
 .page.page-list-meta
     font-size 13px
 
+    .page-top-actions
+        text-align center
+        padding-bottom 16px
+
+        .add-entity
+            width 200px
+            text-align center
+            hh(36px)
+
+    .group
+        margin 16px 0
+
     .group-name
         color cRed
-        text-align center
+        font-size 16px
+
+    .entity
+        display inline-block
+        vertical-align top
+        border 1px solid cBorder
+        border-radius 4px
+        width 260px
+        margin 8px 4px
+
+        &:hover
+            background cBlue0
+
+    .entity-label, .entity-name
+        display block
+        padding 0 8px
+        hh(36px)
+        border-bottom 1px solid cBorder
+        text-decoration none
+        color #000
+        letter-spacing 1px
+
+    .entity-actions
+        padding 0 8px
+        text-align right
+        font-size 12px
+        hh(24px)
+        opacity .7
+
+        a
+            margin-left 8px
+
+        a.remove-entity
+            color cRed
+

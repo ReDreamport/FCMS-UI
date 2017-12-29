@@ -1,15 +1,20 @@
 .page.page-list-meta
     .page-top-actions
-        a.btn(href="#!meta/entity-add") 添加实体
+        a.add-entity.btn.btn-red(href="#!meta/entity-add") 添加新实体
 
-    table.simple
-        each entityNames, groupName in entityNamesByGroup
-            tr
-                td.group-name(colspan=2)=groupName
-                each entityName in entityNames
-                    - var entity = entityMetaMap[entityName]
-                    tr
-                        td=entity.label
-                        td
-                            a(href="#!meta/entity/" + entityName)=entityName
-                        
+    .list
+        - var groupNames = Object.keys(entityNamesByGroup).sort()
+        each groupName in groupNames
+            - var entityNames = entityNamesByGroup[groupName]
+            .group
+                .group-name(colspan=2)=groupName
+                .items
+                    each entityName in entityNames
+                        - var entity = entityMetaMap[entityName]
+                        .entity
+                            a.entity-label(href="#!/meta/entity/" + entityName)=entity.label
+                            a.entity-name(href="#!/meta/entity/" + entityName)=entityName
+                            .entity-actions
+                                a.to-list(href="#!/list/" + entityName) 列表页
+                                a.remove-entity(href="javascript:", entityName=entityName) 删除
+                            
