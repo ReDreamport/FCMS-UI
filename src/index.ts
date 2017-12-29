@@ -2,6 +2,7 @@
 
 import $ = require("jquery")
 import _ = require("lodash")
+import page = require("page")
 
 import { api } from "./api"
 import { fileObjectToInfo, fileObjectToLink, formatDate, isSortableField,
@@ -25,8 +26,7 @@ $(() => {
     .then(function() {
         initJadeContext()
         initEvents()
-        initRouter()
-        reopenPages()
+        initRouterThenRestore()
     }).catch(function(e) {
         console.error(e)
     })
@@ -127,7 +127,25 @@ function initEvents() {
     })
 }
 
-function reopenPages() {
-    //
+function initRouterThenRestore() {
+    const plStr = localStorage.getItem("openLinks")
+    const openLinks: string[] = plStr && JSON.parse(plStr) || []
+
+    const ooStr = localStorage.getItem("openOrders")
+    const openOrders = ooStr && JSON.parse(ooStr) || []
+
+    if (location.hash !== "") {
+        console.log("location hash: " + location.hash)
+        location.href = "/"
+        return
+    }
+    initRouter()
+
+    for (let link of openLinks) {
+        if (link.indexOf("#!")) link = link.substring(2)
+        page(link)
+    }
+
+    for (const open of openOrders) page(open)
 }
 

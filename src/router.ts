@@ -52,11 +52,6 @@ function configRoute(path: string, PageClass: typeof Page) {
 
         const key = removeLeadingSlash(context.path)
 
-        const lastKey = $(".pages-switches .page-switch.current").attr("key")
-        if (lastKey) {
-            doHidePage(opens[lastKey])
-        }
-
         if (opens[key]) {
             const p = opens[key]
             doShowPage(p)
@@ -86,6 +81,8 @@ function configRoute(path: string, PageClass: typeof Page) {
 
             adjustPageSwitchWidth()
         }
+
+        persistOpensAndOrders()
     })
 }
 
@@ -97,6 +94,11 @@ function removeLeadingSlash(path: string) {
 }
 
 function doShowPage(p: Page) {
+    const lastKey = $(".pages-switches .page-switch.current").attr("key")
+    if (lastKey) {
+        doHidePage(opens[lastKey])
+    }
+
     p.afterShow()
     p.$pageParent.show()
     p.$pageSwitch.addClass("current")
@@ -125,6 +127,7 @@ export function closeByKey(key: string) {
     } else {
         page("/")
     }
+    persistOpensAndOrders()
 
     adjustPageSwitchWidth()
 }
@@ -142,4 +145,14 @@ function adjustPageSwitchWidth() {
         + newItemOuterWidth - oldItemOuterWidth
     if (newTitleWidth > 120) newTitleWidth = 120
     $parent.find(".title").width(newTitleWidth)
+}
+
+function persistOpensAndOrders() {
+    const openLinks: string[] = []
+    $(".pages-switches .page-switch").iterate($a => {
+        openLinks.push($a.mustAttr("href"))
+    })
+
+    localStorage.setItem("openLinks", JSON.stringify(openLinks))
+    localStorage.setItem("openOrders", JSON.stringify(openOrders))
 }

@@ -6,12 +6,12 @@ each mg in menuGroups
             if mi.toEntity
                 -var em = meta.entities[mi.toEntity]
                 if em
-                    a.menu-item.to-list-entity(href="#!list/" + mi.toEntity)= mi.label
+                    a.menu-item.to-list-entity(href="#!/list/" + mi.toEntity)= mi.label
             else if mi.callFunc
                 a.menu-item.call-func(href="/#!call/" + mi.callFunc)= mi.label
 
 if user.admin
     .menu-group
         .menu-group-title Menu
-        a.menu-item.to-list-entity(href="#!list/F_Menu") 菜单
+        a.menu-item.to-list-entity(href="#!/list/F_Menu") 菜单
         
