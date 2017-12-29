@@ -3,7 +3,7 @@
 
 import $ = require("jquery")
 import page = require("page")
-import { EditEntity } from "./entity/edit"
+import { CreateEntity, EditEntity } from "./entity/edit"
 import { ListEntity } from "./entity/list"
 import { CreateMeta, EditMeta } from "./meta/edit"
 import { ListMeta } from "./meta/list"
@@ -20,6 +20,7 @@ export function initRouter() {
 
     PageClasses["/list/:entityName"] = ListEntity
     PageClasses["/edit/:entityName/:id"] = EditEntity
+    PageClasses["/add/:entityName"] = CreateEntity
 
     PageClasses["*"] = NotFoundPage
 

@@ -199,7 +199,11 @@ export class CreateEditMeta extends Page {
         newEntityMeta.fields = {}
         this.$tbodyFields.find("tr").iterate($tr => {
             const fieldName = $tr.mustAttr("field-name")
-            newEntityMeta.fields[fieldName] = fields[fieldName]
+            const fm = fields[fieldName]
+            newEntityMeta.fields[fieldName] = fm
+
+            fm.fastSearch = $tr.mustFindOne(".fast-search").prop("checked")
+            fm.showInListPage = $tr.mustFindOne(".show-list").prop("checked")
         })
 
         console.log(newEntityMeta)

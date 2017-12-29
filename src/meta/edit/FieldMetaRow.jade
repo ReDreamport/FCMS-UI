@@ -7,4 +7,8 @@ tr(field-name=name)
     td=type
     td=refEntity
     td.align-center=multiple?"多":""
-    td.align-center=fastSearch?"快搜":""
+    td.align-center
+        input.fast-search(type="checkbox" checked=fastSearch)
+    td.align-center
+        input.show-list(type="checkbox" checked=showInListPage)
+        

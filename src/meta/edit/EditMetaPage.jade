@@ -1,8 +1,9 @@
 include ../../mixin
 
 .page.page-edit-meta
-    .page-top-actions
-        a.save.btn(href="javascript:;") 保存
+    .page-actions
+        a.save.btn.btn-red(href="javascript:;") 保存
+
     .entity-form.mc-form
         .section
             .section-title 核心
@@ -88,4 +89,5 @@ include ../../mixin
                             th(style="width: 160px;") 关联实体
                             th.align-center(style="width: 40px;") 多值
                             th.align-center(style="width: 40px;") 快查
+                            th.align-center(style="width: 40px;") 列表
                     tbody.fields

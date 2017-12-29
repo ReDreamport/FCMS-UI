@@ -1,7 +1,10 @@
 import $ = require("jquery")
+import _ = require("lodash")
+
 import { alertAjaxIfError, api } from "../../api"
-import { onEnterKeyOrChange, pxToNumber } from "../../common"
+import { onEnterKeyOrChange, pxToNumber, SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
+import { loadReferences } from "../digest/index"
 
 export class EntityLister {
     $root: JQuery
@@ -48,10 +51,16 @@ export class EntityLister {
     private decideListFields() {
         // TODO showInList 创建、修改时间放后
         this.listFieldNames = []
-        Object.keys(this.entityMeta.fields).forEach(fn => {
+        const allFieldsNames = Object.keys(this.entityMeta.fields)
+
+        // 系统字段放最后
+        _.pull(allFieldsNames, ...SYSTEM_FIELDS)
+        allFieldsNames.splice(allFieldsNames.length, 0, ...SYSTEM_FIELDS)
+
+        allFieldsNames.forEach(fn => {
             const fieldMeta = this.entityMeta.fields[fn]
             if (fieldMeta.type === "Password") return // 密码一定不显示
-            this.listFieldNames.push(fn)
+            if (fieldMeta.showInListPage) this.listFieldNames.push(fn)
         })
     }
 
@@ -124,6 +133,8 @@ export class EntityLister {
                 forSelect: this.forSelect,
                 listFieldNames: this.listFieldNames, page: r.page}
             this.$listTable.append(ST.EntityListTbody(jadeCtx))
+
+            loadReferences(this.$listTable)
         })
     }
 }

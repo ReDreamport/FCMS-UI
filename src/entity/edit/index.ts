@@ -365,6 +365,7 @@ class CreateEditEntity extends Page {
         alertAjaxIfError(q).then(() => {
             toastSuccess("保存成功！")
             closeByKey(this.routeCtx.path)
+            $(".page.page-list-entity .refresh-list").click()
         })
     }
 }
@@ -381,6 +382,18 @@ export class EditEntity extends CreateEditEntity {
         const id = this.routeCtx.params.id
 
         this.setTitle(`${entityMeta.label} ${digestId(id)}`)
+
+        return super.pBuild()
+    }
+}
+
+export class CreateEntity extends CreateEditEntity {
+    pBuild() {
+        this.entityValue = {_id: ""}
+        const entityName = this.routeCtx.params.entityName
+        const entityMeta = getMeta().entities[entityName]
+
+        this.setTitle(`创建 ${entityMeta.label}`)
 
         return super.pBuild()
     }

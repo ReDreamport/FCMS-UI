@@ -20,7 +20,5 @@ tbody
                     // 富文本不显示
                     if fieldMeta.multiple 
                         | ...
-                    else if fieldMeta.inputType === "RichText"
-                        | ... 
                     else
                         +DisplayFieldItem(fieldMeta, fieldValue)

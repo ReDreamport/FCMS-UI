@@ -109,6 +109,7 @@ interface FieldMeta {
     textOptions?: string[]
     kvOptions?: KeyValuePair[]
     finalOptions?: KeyValuePair[]
+    showInListPage?: boolean
 }
 
 interface EntityMeta {
@@ -116,9 +117,9 @@ interface EntityMeta {
     label: string
     system: boolean
     displayGroup?: string
+    iconField?: string
     digestConfig?: string
     fieldsForDigest?: string[]
-    iconField?: string
     editEnhanceFunc?: string
     db: string
     dbName: string
