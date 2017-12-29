@@ -59,8 +59,26 @@ function initJadeContext() {
         makeSureArray,
         showFileSize,
         decideListFields,
-        displayField
+        displayField,
+        putByKey
     }
+}
+
+let anyKey = 0
+const anyStore: {[key: string]: any} = {}
+
+function putByKey(value: any) {
+    const key = (++anyKey).toString()
+    anyStore[key] = value
+    return key
+}
+
+export function getByKey(key: string) {
+    return anyStore[key]
+}
+
+export function deleteByKey(key: string) {
+    delete anyStore[key]
 }
 
 function initEvents() {

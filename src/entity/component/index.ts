@@ -1,8 +1,10 @@
+import $ = require("jquery")
 import _ = require("lodash")
 
 import { SYSTEM_FIELDS } from "../../common"
 import { initDialog } from "../../dialog"
 import { getMeta } from "../../globals"
+import { EntityEditForm } from "../edit/index"
 
 const NOT_LIST_TYPES = ["Password", "Component", "Object"]
 const NOT_LIST_INPUT_TYPES = ["TextArea", "RichText"]
@@ -22,9 +24,21 @@ export function decideListFields(entityName: string) {
 
     return finalFieldNames
 }
-export function editComponent(entityName: string, componentValue: any,
-    callback: (newComValue: any) => void) {
+export function editComponent(entityName: string, fieldLabel: string,
+    componentValue: any, callback: (newComValue: any) => void) {
 
-    const $overlay = $(ST.EditComponentDialog()).appendTo($("body"))
+    const $overlay = $(ST.EditComponentDialog({fieldLabel}))
+        .appendTo($("body"))
     initDialog($overlay, null)
+    const $dc = $overlay.mustFindOne(".dialog-content")
+
+    const entityMeta = getMeta().entities[entityName]
+
+    const form = new EntityEditForm(entityMeta, componentValue, $dc)
+
+    $overlay.mustFindOne(".dialog-footer .finish").click(function() {
+        const entity = form.getInput()
+        $overlay.remove()
+        callback(entity)
+    })
 }

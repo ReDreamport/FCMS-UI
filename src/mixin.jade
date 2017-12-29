@@ -157,7 +157,8 @@ mixin ComponentList(entityName, multiple, values)
                 +ComponentItem(entityName, multiple, item)
 
 mixin ComponentItem(entityName, multiple, itemValue)
-    tr
+    - var storeKey = JC.putByKey(itemValue)
+    tr(storeKey=storeKey)
         - var listFieldNames = JC.decideListFields(entityName)
         - var entityMeta = JC.getMeta().entities[entityName]
         td.align-center(style="width: 108px;")

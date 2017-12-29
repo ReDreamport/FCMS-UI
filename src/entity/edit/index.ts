@@ -9,9 +9,11 @@ import { alertAjaxIfError, api, upload } from "../../api"
 import { collectInputByFieldName, collectSimpleInput,
     SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
+import { deleteByKey, getByKey } from "../../index"
 import { Page } from "../../page"
 import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
+import { editComponent } from "../component"
 import { loadReferences } from "../digest"
 import { digestId } from "../index"
 import { selectEntity } from "../select"
@@ -55,7 +57,7 @@ function fieldMetaToActions(fieldMeta: FieldMeta)
     }
 }
 
-class EntityEditForm {
+export class EntityEditForm {
     private $root: JQuery
 
     constructor(private entityMeta: EntityMeta,
@@ -107,7 +109,11 @@ class EntityEditForm {
         // 多值排序
         $fields.find(".multiple-input").iterate($multiple => {
             Sortable.create($multiple[0], {handle: ".move-handle",
-                animation: 600})
+                animation: 300})
+        })
+
+        $fields.find("table.component-list tbody").iterate($tbody => {
+            Sortable.create($tbody[0], {animation: 200})
         })
 
         // 多值，添加一项
@@ -174,8 +180,24 @@ class EntityEditForm {
         $fields.on("click", ".remove-row", e => {
             $(e.target).mustClosest("tr").remove()
         })
+
+        // 编辑引用行
+        $fields.on("click", "table.component-list .edit", e => {
+            const $tr = $(e.target).mustClosest("tr")
+            const $field = $tr.mustClosest(".field")
+            const fieldName = $field.mustAttr("field-name")
+            const fieldMeta = this.entityMeta.fields[fieldName]
+            const itemValue = getByKey($tr.mustAttr("storeKey"))
+            editComponent(fieldMeta.refEntity, fieldMeta.label, itemValue,
+                newComValue => {
+                const itemCtx = {entityName: fieldMeta.refEntity,
+                    multiple: fieldMeta.multiple, itemValue: newComValue}
+                $tr.replaceWith(ST.ComponentItem(itemCtx))
+            })
+        })
     }
 
+    // 点击字段的编辑按钮
     editField($field: JQuery) {
         const fieldName = $field.mustAttr("field-name")
         const fieldMeta = this.entityMeta.fields[fieldName]
@@ -216,7 +238,14 @@ class EntityEditForm {
             // 先当多值处理
             const list: any[] = []
 
-            if (inputType === "RichText") {
+            if (type === "Component") {
+                $f.find("table.component-list:first tbody tr").iterate($tr => {
+                    const storeKey = $tr.mustAttr("storeKey")
+                    const value = getByKey(storeKey)
+                    deleteByKey(storeKey)
+                    list.push(value)
+                })
+            } else if (inputType === "RichText") {
                 $f.find(".field-input-parent").iterate($fi => {
                     const value = $fi.mustFindOne(".preview-area").html()
                     if (!_.isNil(value)) list.push(value)
