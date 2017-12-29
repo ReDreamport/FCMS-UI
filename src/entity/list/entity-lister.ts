@@ -46,6 +46,12 @@ export class EntityLister {
             const entity = this.page.find(v => v._id === id)
             if (onSelect) onSelect(entity as EntityValue)
         })
+
+        const $checkAll = this.$root.mustFindOne(".check-all")
+        $checkAll.click(() => {
+            const checked = $checkAll.prop("checked")
+            this.$listTable.find("tbody tr .check-row").prop("checked", checked)
+        })
     }
 
     private decideListFields() {
