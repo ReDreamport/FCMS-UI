@@ -1,17 +1,19 @@
 // cSpell:words
 
 import $ = require("jquery")
+import _ = require("lodash")
 
 import { api } from "./api"
 import { fileObjectToInfo, fileObjectToLink, formatDate, isSortableField,
     makeSureArray, showFileSize, uniqueId } from "./common"
 import { showDatePicker } from "./date-picker"
-import { showRichEditorDialog } from "./dialog/index"
+import { showRichEditorDialog } from "./dialog"
 import { digestId, displayField, getColumnStyle } from "./entity"
 import { decideListFields } from "./entity/component"
 import { getMeta, setMeta, setUser } from "./globals"
 import { extend } from "./jquery-ext"
 import { pInitMenu } from "./menu"
+import { decideEntitiesFinalOptions } from "./meta"
 import { closeByKey, initRouter } from "./router"
 
 extend()
@@ -42,6 +44,8 @@ function pPing() {
 function pFetchMeta() {
     const q = api.get("meta")
     return q.then(function(meta: any) {
+        const entities = _.values(meta.entities)
+        decideEntitiesFinalOptions(entities)
         setMeta(meta)
     })
 }

@@ -18,26 +18,6 @@ import { loadReferences } from "../digest"
 import { digestId } from "../index"
 import { selectEntity } from "../select"
 
-function decideFinalOptions(entityMeta: EntityMeta) {
-    const fieldNames = Object.keys(entityMeta.fields)
-    for (const fn of fieldNames) {
-        const fieldMeta = entityMeta.fields[fn]
-        const options: KeyValuePair[] = []
-
-        if (fieldMeta.textOptions && fieldMeta.textOptions.length) {
-            for (const o of fieldMeta.textOptions) {
-                options.push({key: o, value: o})
-            }
-        } else if (fieldMeta.kvOptions && fieldMeta.kvOptions.length) {
-            for (const o of fieldMeta.kvOptions) {
-               options.push(o)
-            }
-        }
-
-        fieldMeta.finalOptions = options
-    }
-}
-
 function fieldMetaToActions(fieldMeta: FieldMeta)
     : {add?: boolean; edit?: boolean; empty?: boolean} {
 
@@ -63,8 +43,6 @@ export class EntityEditForm {
     constructor(private entityMeta: EntityMeta,
         private entityInitValue: EntityValue,
         $parent: JQuery) {
-
-        decideFinalOptions(entityMeta)
 
         this.$root = $("<div>", {class: "entity-edit-form mc-form"})
             .appendTo($parent)

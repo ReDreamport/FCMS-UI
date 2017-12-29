@@ -17,8 +17,8 @@ export function decideListFields(entityName: string) {
 
     for (const fn of fieldNames) {
         const fm = fields[fn]
-        if (NOT_LIST_TYPES.indexOf(fm.type) >= 0) return
-        if (NOT_LIST_INPUT_TYPES.indexOf(fm.inputType) >= 0) return
+        if (NOT_LIST_TYPES.indexOf(fm.type) >= 0) continue
+        if (NOT_LIST_INPUT_TYPES.indexOf(fm.inputType) >= 0) continue
         finalFieldNames.push(fn)
     }
 

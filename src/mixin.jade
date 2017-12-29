@@ -106,17 +106,21 @@ mixin EntityDigest(icon, digest, id)
 mixin LoadingRef(refEntity, id)
     .loading-ref(entityName=refEntity, id=id)=id
 
+//- 只用于显示一项值，特别对于多值
 mixin DisplayFieldItem(fieldMeta, fieldValue)
     if fieldValue === null || fieldValue === undefined
         | 
+    else if fieldMeta.inputType === "CheckList" || fieldMeta.inputType === "Select"
+        - var o = fieldMeta.finalOptions && fieldMeta.finalOptions.find(function(o){ o.key === fieldValue })
+        - fieldValue = o ? o.value : fieldValue
+        | #{fieldValue}
     else
-        //- TODO input type == select
         case fieldMeta.type
             when 'Object'
             when 'Component'
                 | ...
             when 'Float'
-                |=fieldValue && fieldValue.toPrecision(3)
+                | #{ieldValue && fieldValue.toPrecision(3)}
             when 'Date'
                 | #{JC.formatDate(fieldValue, "YY-MM-DD")}
             when 'Time'
