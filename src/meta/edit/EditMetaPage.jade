@@ -8,10 +8,13 @@ include ../../mixin
         .section
             .section-title 核心
             .row
+                +Field("type", "名称")
+                    +Select([["Entity", "实体"], ["Component", "组件"]], entityMeta.type || "Entity", "meta-type")
                 +Field("name", "名称")
                     input(type="text", value=entityMeta.name)
                 +Field("label", "显示名")
                     input(type="text", value=entityMeta.label)
+            .row.for-entity
                 +Field("noCreate", "禁止新增")
                     input(type="checkbox", checked=entityMeta.noCreate)
                 +Field("noEdit", "禁止编辑")
@@ -23,19 +26,18 @@ include ../../mixin
 
         .section
             .section-title 显示
-            .row
-                +Field("displayGroup", "显示分组")
-                    input(type="text", value=entityMeta.displayGroup)
+            .row.for-entity
                 +Field("iconField", "图标字段")
                     input(type="text", value=entityMeta.iconField)
                 +Field("digestConfig", "摘要配置", "例：icon&name|username")
                     input(type="text", value=entityMeta.digestConfig)
+            .row
                 +Field("editEnhanceFunc", "编辑增强脚本名")
                     input(type="text", value=entityMeta.editEnhanceFunc)
                 +Field("viewEnhanceFunc", "详情增强脚本名")
                     input(type="text", value=entityMeta.viewEnhanceFunc)
 
-        .section
+        .section.for-entity
             .section-title 存储
             .row
                 +Field("db", "数据库类型")

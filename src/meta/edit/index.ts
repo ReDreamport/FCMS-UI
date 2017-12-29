@@ -20,6 +20,7 @@ export class CreateEditMeta extends Page {
 
     private $page: JQuery
     private $tbodyFields: JQuery
+    private $metaType: JQuery
 
     pBuild() {
         this.$page = $(ST.EditMetaPage({entityMeta: this.entityMeta}))
@@ -47,6 +48,7 @@ export class CreateEditMeta extends Page {
             $(e.target).closest("tr").remove()
         })
 
+        // 删除字段
         this.$page.on("click", ".remove-field", e => {
             const $row = $(e.target).closest("tr")
             const fieldName = $row.attr("field-name")
@@ -60,6 +62,7 @@ export class CreateEditMeta extends Page {
             }
         })
 
+        // 编辑字段
         this.$page.on("click", ".edit-field", e => {
             const $row = $(e.target).closest("tr")
             const xy = $row.offset() || null
@@ -72,6 +75,11 @@ export class CreateEditMeta extends Page {
 
         Sortable.create(this.$tbodyFields[0], {animation: 300})
 
+        this.$metaType = this.$page.mustFindOne(".meta-type")
+        this.$metaType.change(() => {
+            this.switchEntityOrComponent()
+        })
+
         this.$page.mustFindOne(".save").click(() => {
             this.save()
         })
@@ -79,6 +87,18 @@ export class CreateEditMeta extends Page {
         // main
         this.showFieldsTable()
         this.showIndexesTable()
+
+        this.switchEntityOrComponent()
+    }
+
+    private switchEntityOrComponent() {
+        const type = this.$metaType.val()
+        const $forEntity = this.$page.find(".for-entity")
+        if (type === "Entity") {
+            $forEntity.show()
+        } else {
+            $forEntity.hide()
+        }
     }
 
     private showFieldsTable() {

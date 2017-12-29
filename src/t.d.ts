@@ -113,6 +113,7 @@ interface FieldMeta {
 }
 
 interface EntityMeta {
+    type: string
     name: string
     label: string
     system: boolean

@@ -12,7 +12,9 @@
                     each entityName in entityNames
                         - var entity = entityMetaMap[entityName]
                         .entity
-                            a.entity-label(href="#!/meta/entity/" + entityName)=entity.label
+                            a.entity-label(href="#!/meta/entity/" + entityName)
+                                i.iconfont(class=(entity.type === "Component" ? "icon-component" : "icon-entity"))
+                                span=entity.label
                             a.entity-name(href="#!/meta/entity/" + entityName)=entityName
                             .entity-actions
                                 a.to-list(href="#!/list/" + entityName) 列表页

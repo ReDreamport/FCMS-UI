@@ -6,7 +6,7 @@ import page = require("page")
 
 import { api } from "./api"
 import { fileObjectToInfo, fileObjectToLink, formatDate, isSortableField,
-    makeSureArray, showFileSize, uniqueId } from "./common"
+    makeSureArray, showFileSize, SYSTEM_FIELDS, uniqueId } from "./common"
 import { showDatePicker } from "./date-picker"
 import { showRichEditorDialog } from "./dialog"
 import { digestId, displayField, getColumnStyle } from "./entity"
@@ -64,7 +64,8 @@ function initJadeContext() {
         showFileSize,
         decideListFields,
         displayField,
-        putByKey
+        putByKey,
+        SYSTEM_FIELDS
     }
 }
 
