@@ -3,6 +3,7 @@ import { Page } from "../../page"
 
 import $ = require("jquery")
 import { alertAjaxIfError, api } from "../../api"
+import { isEnterKey } from "../../common"
 import { toastSuccess } from "../../toast"
 
 export class ListMeta extends Page {
@@ -35,6 +36,31 @@ export class ListMeta extends Page {
                 setTimeout(() => location.reload(), 1000)
             })
         })
+
+        const $search = $page.mustFindOne(".search")
+        $search.on("change,blur", search)
+        $search.keydown(function(e) {
+            if (isEnterKey(e)) search()
+        })
+
+        function search() {
+            const keyword = $search.stringInput()
+            const $entities = $page.find(".entity")
+            if (!keyword) {
+                $entities.show()
+            } else {
+                $entities.iterate($e => {
+                    const label = $e.mustFindOne(".entity-label span").text()
+                    const name = $e.mustFindOne(".entity-name").text()
+                    if (label.indexOf(keyword) >= 0
+                        || name.indexOf(keyword) >= 0) {
+                        $e.show()
+                    } else {
+                        $e.hide()
+                    }
+                })
+            }
+        }
     }
 
 }

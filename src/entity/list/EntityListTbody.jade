@@ -10,8 +10,7 @@ tbody
                 td.align-center
                     input.check-row(type="checkbox")
                 td.align-center
-                    a.view-entity.btn(href="/#!view/#{entityName}/#{item._id}") 详情
-                    a.edit-entity.btn(href="/#!edit/#{entityName}/#{item._id}") 编辑
+                    a.edit-entity.btn.iconfont.icon-edit(href="/#!edit/#{entityName}/#{item._id}")
             each fn in listFieldNames
                 - var fieldMeta = entityMeta.fields[fn]
                 - var fieldValue = item[fn]

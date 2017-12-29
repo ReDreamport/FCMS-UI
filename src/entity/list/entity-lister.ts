@@ -54,6 +54,15 @@ export class EntityLister {
         })
     }
 
+    getSelectedIds() {
+        const ids: string[] = []
+        this.$listTable.find("tbody .check-row:checked").iterate($c => {
+            const id = $c.mustClosest("tr").mustAttr("id")
+            ids.push(id)
+        })
+        return ids
+    }
+
     private decideListFields() {
         // TODO showInList 创建、修改时间放后
         this.listFieldNames = []
