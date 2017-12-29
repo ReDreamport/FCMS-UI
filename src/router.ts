@@ -38,6 +38,18 @@ function configRoute(path: string, PageClass: typeof Page) {
 
     page(path, function(context) {
         console.log("page path: " + path)
+        if (path === "*") {
+            if (context.path.indexOf("//") === 0) {
+                const toPath = context.path.substring(1) // 保留最前面的一个斜线
+                page.redirect(toPath)
+                return
+            } else if (context.path[0] !== "/") {
+                const toPath = "/" + context.path // 必须最前面有一个斜线
+                page.redirect(toPath)
+                return
+            }
+        }
+
         const key = removeLeadingSlash(context.path)
 
         const lastKey = $(".pages-switches .page-switch.current").attr("key")
