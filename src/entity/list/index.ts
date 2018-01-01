@@ -1,10 +1,12 @@
+import page = require("page")
+
 import { getMeta } from "../../globals"
 import { Page } from "../../page"
 import { EntityLister } from "./entity-lister"
 
 import $ = require("jquery")
 import { alertAjaxIfError, api } from "../../api"
-import { toastSuccess, toastWarning } from "../../toast/index"
+import { toastSuccess, toastWarning } from "../../toast"
 
 export class ListEntity extends Page {
     private $page: JQuery
@@ -13,6 +15,10 @@ export class ListEntity extends Page {
     pBuild() {
         const entityName = this.routeCtx.params.entityName
         const entityMeta = getMeta().entities[entityName]
+
+        if (entityMeta.singleton) {
+            redirectToSingleton(entityName)
+        }
 
         this.$page = $(ST.ListEntityPage({entityName, label: entityMeta.label}))
             .appendTo(this.$pageParent)
@@ -39,4 +45,16 @@ export class ListEntity extends Page {
             })
         })
     }
+}
+
+function redirectToSingleton(entityName: string) {
+    const q = api.get(`entity/${entityName}`, {_pageSize: 1})
+    alertAjaxIfError(q).then(r => {
+        if (r.page && r.page[0]) {
+            const id = r.page[0]._id
+            page.redirect(`/edit/${entityName}/${id}`)
+        } else {
+            page.redirect(`/add/${entityName}`)
+        }
+    })
 }

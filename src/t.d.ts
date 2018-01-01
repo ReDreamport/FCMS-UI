@@ -126,6 +126,7 @@ interface EntityMeta {
     dbName: string
     mongoIndexes?: any[]
     mysqlIndexes?: any[]
+    singleton?: boolean
     fields: {[fieldName: string]: FieldMeta}
 }
 
