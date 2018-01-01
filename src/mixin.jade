@@ -88,7 +88,7 @@ mixin FieldInputItem(fm, fv)
                         +LoadingRef(fm.refEntity, fv)
                 else if fv && fv.id
                     .ref-item(id=fv.id)
-                        +EntityDigest(fv.icon, fv.digest, fv.id)
+                        +EntityDigest(fv.icon, fv.digest, fv.id, fm.refEntity)
             
 mixin MultipleInputItem(fm, fv)
     .multiple-input-item
@@ -96,8 +96,9 @@ mixin MultipleInputItem(fm, fv)
         +FieldInputItem(fm, fv)
         a.remove-m-input-item.iconfont.icon-close-c(href="javascript:")
                 
-mixin EntityDigest(icon, digest, id)
-    .entity-digest(id=id)
+mixin EntityDigest(icon, digest, id, entityName)
+    a.entity-digest(id=id, href="#!/edit/"+entityName+"/"+id)
+        i.iconfont.icon-link
         if icon
             .img-parent
                 img.icon(src=icon)
@@ -109,24 +110,28 @@ mixin LoadingRef(refEntity, id)
 //- 只用于显示一项值，特别对于多值
 mixin DisplayFieldItem(fieldMeta, fieldValue)
     if fieldValue === null || fieldValue === undefined
-        | 
+        span
     else if fieldMeta.inputType === "CheckList" || fieldMeta.inputType === "Select"
         - var o = fieldMeta.finalOptions && fieldMeta.finalOptions.find(function(o){ o.key === fieldValue })
         - fieldValue = o ? o.value : fieldValue
-        | #{fieldValue}
+        span(title=feldValue)=fieldValue
     else
         case fieldMeta.type
             when 'Object'
             when 'Component'
-                | ...
+                span ...
             when 'Float'
-                | #{ieldValue && fieldValue.toPrecision(3)}
+                - var dv = fieldValue && fieldValue.toPrecision(3)
+                span(title=dv)=dv
             when 'Date'
-                | #{JC.formatDate(fieldValue, "YY-MM-DD")}
+                - var dv = JC.formatDate(fieldValue, "YY-MM-DD")
+                span(title=dv)=dv
             when 'Time'
-                | #{JC.formatDate(fieldValue, "HH:mm:ss")}
+                - var dv = JC.formatDate(fieldValue, "HH:mm:ss")
+                span(title=dv)=dv
             when 'DateTime'
-                | #{JC.formatDate(fieldValue, "YY-MM-DD HH:mm:ss")}
+                - var dv = JC.formatDate(fieldValue, "YY-MM-DD HH:mm:ss")
+                span(title=dv)=dv
             when 'Boolean'
                 if fieldValue === true
                     i.iconfont.icon-correct
@@ -143,7 +148,7 @@ mixin DisplayFieldItem(fieldMeta, fieldValue)
                     a.loading-ref(href=`/#!view/${fieldMeta.refEntity}${fieldValue}`,
                         entityName=fieldMeta.refEntity, id=fieldValue)=JC.digestId(fieldValue)
             default
-                span!=fieldValue
+                span(title=fieldValue)!=fieldValue
 
 mixin ComponentList(entityName, multiple, values)
     table.component-list

@@ -41,7 +41,8 @@ export function digestEntity(entityMeta: EntityMeta,
 
     digest = digest || entityValue._id
 
-    return {icon: iconValue, digest, id: entityValue._id}
+    return {icon: iconValue, digest, id: entityValue._id,
+        entityName: entityMeta.name}
 }
 
 function fieldValueToString(fieldMeta: FieldMeta, fieldValue: any) {

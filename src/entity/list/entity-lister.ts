@@ -47,7 +47,7 @@ export class EntityLister {
             if (onSelect) onSelect(entity as EntityValue)
         })
 
-        const $checkAll = this.$root.mustFindOne(".check-all")
+        const $checkAll = this.$root.find(".check-all")
         $checkAll.click(() => {
             const checked = $checkAll.prop("checked")
             this.$listTable.find("tbody tr .check-row").prop("checked", checked)

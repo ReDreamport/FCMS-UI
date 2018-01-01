@@ -160,6 +160,7 @@ interface MetaStore {
 
 interface DigestInfo {
     id: string
+    entityName: string
     icon?: string
     digest: string
 }
