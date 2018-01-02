@@ -143,7 +143,7 @@ function failHandler() {
     }
 }
 
-export const apiRoot = "/api/"
+export const apiRoot = "/api/c/"
 
 export const api = new Relative(apiRoot)
 
