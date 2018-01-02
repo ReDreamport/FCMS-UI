@@ -23,6 +23,8 @@ include ../../mixin
                     input(type="checkbox", checked=entityMeta.noDelete)
                 +Field("singleton", "单例")
                     input(type="checkbox", checked=entityMeta.singleton)
+                +Field("history", "历史记录上限", "0：不保留，-1：无限保留")
+                    input(type="text", value=entityMeta.history || 0)
 
         .section
             .section-title 显示

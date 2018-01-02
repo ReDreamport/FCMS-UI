@@ -3,10 +3,12 @@
 import $ = require("jquery")
 import json5 = require("json5")
 import _ = require("lodash")
+import page = require("page")
 import Sortable = require("sortablejs")
 
-import { alertAjaxIfError, api, upload } from "../../api"
+import { alertAjaxIfError, api, pLoadEntityByIds, upload } from "../../api"
 import { collectInputByFieldName, collectSimpleInput,
+    entityListToMap,
     SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
 import { deleteByKey, getByKey } from "../../index"
@@ -176,7 +178,7 @@ export class EntityEditForm {
     }
 
     // 点击字段的编辑按钮
-    editField($field: JQuery) {
+    private editField($field: JQuery) {
         const fieldName = $field.mustAttr("field-name")
         const fieldMeta = this.entityMeta.fields[fieldName]
         const $multipleInput = $field.mustFindOne(".multiple-input:first")
@@ -282,6 +284,10 @@ export class EntityEditForm {
         console.log(entity)
         return entity
     }
+
+    dispose() {
+        this.$root.remove()
+    }
 }
 
 function editReference($mi: JQuery, fieldMeta: FieldMeta) {
@@ -329,13 +335,13 @@ function getFieldMetaOfMyField($from: JQuery) {
 }
 
 class CreateEditEntity extends Page {
-    private entityName: string
+    protected entityName: string
     protected entityValue: EntityValue
-    private entityMeta: EntityMeta
+    protected entityMeta: EntityMeta
 
-    private $page: JQuery
+    protected $page: JQuery
 
-    private rootForm: EntityEditForm
+    protected rootForm: EntityEditForm
 
     pBuild() {
         this.entityName = this.routeCtx.params.entityName
@@ -350,22 +356,25 @@ class CreateEditEntity extends Page {
         })
     }
 
-    private save() {
+    protected save() {
         let inputEntity: any
         try {
             inputEntity = this.rootForm.getInput()
         } catch (e) {
             toastError(e.message)
-            return
+            throw e
         }
+        // id 一定取 this.entityValue 的（有历史纪录）
         const q = this.entityValue && this.entityValue._id
             ? api.put(`entity/${this.entityName}/${this.entityValue._id}`,
                 inputEntity)
             : api.post(`entity/${this.entityName}`, inputEntity)
-        alertAjaxIfError(q).then(() => {
+        return alertAjaxIfError(q).then(() => {
             toastSuccess("保存成功！")
-            closeByKey(this.routeCtx.path)
             $(".page.page-list-entity .refresh-list").click()
+            // 重新进入页面，保证数据最新
+            closeByKey(this.routeCtx.path)
+            page(this.routeCtx.path)
         })
     }
 }
@@ -373,9 +382,17 @@ export class EditEntity extends CreateEditEntity {
     pLoadData() {
         const entityName = this.routeCtx.params.entityName
         const id = this.routeCtx.params.id
-        const q = api.get(`entity/${entityName}/${id}`)
-        return alertAjaxIfError(q).then(e => this.entityValue = e)
+
+        return this.pLoadEntityValue(entityName, id)
     }
+
+    private pLoadEntityValue(entityName: string, id: string) {
+        const q = api.get(`entity/${entityName}/${id}`)
+        return alertAjaxIfError(q).then(e => {
+            this.entityValue = e
+        })
+    }
+
     pBuild() {
         const entityName = this.routeCtx.params.entityName
         const entityMeta = getMeta().entities[entityName]
@@ -383,7 +400,63 @@ export class EditEntity extends CreateEditEntity {
 
         this.setTitle(`${entityMeta.label} ${digestId(id)}`)
 
-        return super.pBuild()
+        super.pBuild()
+
+        if (entityMeta.history) {
+            this.showHistory()
+         }
+    }
+
+    private showHistory() {
+        const $history = this.$page.mustFindOne(".history")
+        $history.find(".entity-history-list").remove()
+
+        const q = this.pLoadHistory(this.entityName, this.entityValue._id)
+        alertAjaxIfError(q).then(items => {
+            const jadeCtx = {items}
+            const $listTable = $(ST.EntityHistoryList(jadeCtx))
+                .appendTo($history)
+            $listTable.mustFindOne("tbody tr:first").addClass("current")
+            $listTable.on("click", "tr", e => {
+                $listTable.find("tr").removeClass("current")
+                const $tr = $(e.target).mustClosest("tr").addClass("current")
+                this.changeToHistory($tr.mustAttr("id"))
+            })
+        })
+    }
+
+    private pLoadHistory(entityName: string, id: string) {
+        const q = api.get(`history/list/${entityName}/${id}`)
+        return alertAjaxIfError(q).then(r => {
+            const historyItems: HistoryItem[] = r
+            this.entityValue._oldId = this.entityValue._id
+            historyItems.push(this.entityValue as HistoryItem)
+
+            historyItems.sort((a, b) => b._version - a._version)
+
+            const modifiedByIds = historyItems.map(i => i._modifiedBy)
+            return pLoadEntityByIds("F_User", modifiedByIds).then(r2 => {
+                const userMap = entityListToMap(r2.page)
+                historyItems.forEach(i =>
+                    i.modifiedByUser = userMap[i._modifiedBy])
+                return historyItems
+            })
+        })
+    }
+
+    private changeToHistory(id: string) {
+        if (id === this.entityValue._id) {
+            if (this.rootForm) this.rootForm.dispose()
+            this.rootForm = new EntityEditForm(this.entityMeta,
+                this.entityValue, this.$page)
+        } else {
+            if (this.rootForm) this.rootForm.dispose()
+            const q = api.get(`history/get/${this.entityMeta.name}/${id}`)
+            alertAjaxIfError(q).then(r => {
+                this.rootForm = new EntityEditForm(this.entityMeta,
+                    r, this.$page)
+            })
+        }
     }
 }
 

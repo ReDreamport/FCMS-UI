@@ -1,0 +1,18 @@
+.entity-history-list
+    table
+        thead
+            tr
+                th(style="width: 30px;")
+                th.align-center(style="width: 40px;") 版本
+                th.align-center(style="width: 160px;") 保存时间
+                th.align-center 操作人
+        tbody
+            each item in items
+                tr(id=item._id)
+                    td.align-right(style="padding: 0 2px;")
+                        i.iconfont.icon-iconNow
+                    td.align-center=item._version
+                    td.align-center=JC.formatDate(item._modifiedOn, "YYYY-MM-DD HH:mm:ss")
+                    td.align-center
+                        if item.modifiedByUser
+                            span=item.modifiedByUser.username || item.modifiedByUser.phone || item.modifiedByUser.email

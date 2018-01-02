@@ -45,6 +45,7 @@ declare const ST: {
     ComponentItem: STFunc;
     DisplayFieldItem: STFunc;
     EditComponentDialog: STFunc;
+    EntityHistoryList: STFunc;
     //
     DatePicker: STFunc;
     RichTextEditorDialog: STFunc;
@@ -95,7 +96,6 @@ interface FieldMeta {
     persistType: string
     multiple: boolean
     fastSearch: boolean
-    options: any[]
     hideInListPage: boolean
     notShow: boolean
     noCreate: boolean
@@ -103,7 +103,6 @@ interface FieldMeta {
     inputFunc?: string
     optionsDependOnField?: string
     optionsFunc?: string
-    groupedOptions?: any
     optionWidth?: number
     useGuide?: string
     textOptions?: string[]
@@ -127,6 +126,7 @@ interface EntityMeta {
     mongoIndexes?: any[]
     mysqlIndexes?: any[]
     singleton?: boolean
+    history?: number
     fields: {[fieldName: string]: FieldMeta}
 }
 
@@ -163,4 +163,13 @@ interface DigestInfo {
     entityName: string
     icon?: string
     digest: string
+}
+
+interface HistoryItem {
+    _id: string
+    _oldId: string
+    _version: number
+    _modifiedOn: Date
+    _modifiedBy: string
+    modifiedByUser: User
 }

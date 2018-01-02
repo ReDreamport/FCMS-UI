@@ -5,9 +5,9 @@ export class Page {
         protected routeCtx: PageJS.Context) {
     }
 
-    pLoadData() {
+    pLoadData(): Promise<any | void> {
         console.log("Load data for " + this.routeCtx.path)
-        return Promise.resolve(true)
+        return Promise.resolve()
     }
 
     pBuild(): void | Promise<any> {
