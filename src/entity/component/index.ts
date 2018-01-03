@@ -4,7 +4,8 @@ import _ = require("lodash")
 import { SYSTEM_FIELDS } from "../../common"
 import { initDialog } from "../../dialog"
 import { getMeta } from "../../globals"
-import { EntityEditForm } from "../edit/index"
+import { toastError } from "../../toast"
+import { EntityEditForm } from "../edit"
 
 const NOT_LIST_TYPES = ["Password", "Component", "Object"]
 const NOT_LIST_INPUT_TYPES = ["TextArea", "RichText"]
@@ -37,7 +38,15 @@ export function editComponent(entityName: string, fieldLabel: string,
     const form = new EntityEditForm(entityMeta, componentValue, $dc)
 
     $overlay.mustFindOne(".dialog-footer .finish").click(function() {
-        const entity = form.getInput()
+        let entity
+
+        try {
+            entity = form.getInput()
+        } catch (e) {
+            toastError(e.message)
+            return
+        }
+
         $overlay.remove()
         callback(entity)
     })

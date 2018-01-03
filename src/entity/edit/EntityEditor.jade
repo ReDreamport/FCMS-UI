@@ -1,0 +1,12 @@
+.entity-editor
+    .switch-views
+        a.iconfont.icon-form.current(href="javascript:")
+        a.iconfont.icon-json(href="javascript:")
+
+    if entityValue._id
+        .show-id ID: #{entityValue._id}
+
+    .sub-view.view-form
+        
+    .sub-view.view-json.hidden
+        textarea.json-editor

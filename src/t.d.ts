@@ -38,7 +38,8 @@ declare const ST: {
     EntityListTbody: STFunc;
     EditEntityPage: STFunc;
     MultipleInputItem: STFunc;
-    EntityEditFields: STFunc;
+    EntityEditor: STFunc;
+    EntityEditForm: STFunc;
     SelectEntityDialog: STFunc;
     EntityDigest: STFunc;
     LoadingRef: STFunc;

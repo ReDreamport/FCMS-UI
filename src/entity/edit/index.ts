@@ -43,16 +43,17 @@ export class EntityEditForm {
     private $root: JQuery
 
     constructor(private entityMeta: EntityMeta,
-        private entityInitValue: EntityValue,
-        $parent: JQuery) {
+        entityInitValue: EntityValue, $parent: JQuery) {
 
-        this.$root = $("<div>", {class: "entity-edit-form mc-form"})
+        this.$root = $(ST.EntityEditor({entityValue: entityInitValue}))
             .appendTo($parent)
 
-        this.decideFieldOrder()
+        this.enableSwitchViews()
+
+        this.showForm(entityInitValue)
     }
 
-    private decideFieldOrder() {
+    private showForm(entityValue: any) {
         const fieldNames = Object.keys(this.entityMeta.fields)
         _.pull(fieldNames, ...SYSTEM_FIELDS)
 
@@ -78,10 +79,11 @@ export class EntityEditForm {
         }
 
         const jadeCtx = {
-            entityMeta: this.entityMeta, entityValue: this.entityInitValue,
+            entityMeta: this.entityMeta, entityValue,
             inlineFieldNames, blockFieldNames, fieldMetaToActions}
 
-        const $fields = $(ST.EntityEditFields(jadeCtx)).appendTo(this.$root)
+        const $view = this.$root.mustFindOne(".sub-view.view-form").empty()
+        const $fields = $(ST.EntityEditForm(jadeCtx)).appendTo($view)
 
         // 加载关联实体
         loadReferences($fields)
@@ -204,7 +206,47 @@ export class EntityEditForm {
         }
     }
 
-    getInput() {
+    private enableSwitchViews() {
+        const $toForm = this.$root.mustFindOne(".switch-views .icon-form")
+        const $toJSON = this.$root.mustFindOne(".switch-views .icon-json")
+        const $formView = this.$root.mustFindOne(".sub-view.view-form")
+        const $jsonView = this.$root.mustFindOne(".sub-view.view-json")
+        const $jsonEditor = $jsonView.mustFindOne("textarea")
+
+        $toForm.click(() => {
+            const entity = this.getInputFromJSON()
+            console.log("json to entity", entity)
+
+            this.showForm(entity)
+
+            $toForm.addClass("current")
+            $formView.show()
+            $toJSON.removeClass("current")
+            $jsonView.hide()
+        })
+
+        $toJSON.click(() => {
+            const entity = this.getInputFromForm()
+            $jsonEditor.html(JSON.stringify(entity, null, 4))
+
+            $toForm.removeClass("current")
+            $formView.hide()
+            $toJSON.addClass("current")
+            $jsonView.show()
+        })
+    }
+
+    private getInputFromJSON() {
+        const $jsonEditor = this.$root.mustFindOne("textarea.json-editor")
+        const input = $jsonEditor.val() as string
+        try {
+            return json5.parse(input)
+        } catch (e) {
+            throw new Error("JSON 格式有误\n" + e.message)
+        }
+    }
+
+    private getInputFromForm() {
         const $inlineFields = this.$root.mustFindOne(".section.inline-fields")
         const entity = collectInputByFieldName($inlineFields)
 
@@ -249,7 +291,7 @@ export class EntityEditForm {
                        const json = json5.parse(value)
                        list.push(json)
                     } catch (e) {
-                        throw new Error("JSON对象格式错误")
+                        throw new Error("JSON 对象格式错误\n" + e.message)
                     }
                 })
             } else if (type === "File" || type === "Image") {
@@ -281,8 +323,18 @@ export class EntityEditForm {
             }
         })
 
-        console.log(entity)
+        // console.log(entity)
         return entity
+    }
+
+    // 可能抛出异常
+    getInput() {
+        const $formView = this.$root.mustFindOne(".sub-view.view-form")
+        if ($formView.is(":visible")) {
+            return this.getInputFromForm()
+        } else {
+            return this.getInputFromJSON()
+        }
     }
 
     dispose() {
