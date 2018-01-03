@@ -77,7 +77,7 @@ export function fileObjectToLink(obj: UploadResult) {
 }
 
 export function fileObjectToInfo(obj: UploadResult | null | undefined) {
-    if (!obj) {
+    if (!(obj && obj.path)) {
         return "（无）"
     } else {
         const indexOfExt = obj.path.lastIndexOf(".")
