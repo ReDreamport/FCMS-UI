@@ -38,8 +38,7 @@ export class CreateEditMeta extends Page {
         const $addField = this.$page.mustFindOne(".add-field")
         $addField.click(() => {
             this.addFieldRow()
-            const xy = $addField.offset() || null
-            editFieldMeta(this.entityMeta, null, xy, (n, o) => {
+            editFieldMeta(this.entityMeta, null, null, (n, o) => {
                 this.finishEditFieldMeta(n, o)
             })
         })
@@ -65,10 +64,26 @@ export class CreateEditMeta extends Page {
         // 编辑字段
         this.$page.on("click", ".edit-field", e => {
             const $row = $(e.target).closest("tr")
-            const xy = $row.offset() || null
             const fieldName = $row.attr("field-name") || ""
             editFieldMeta(this.entityMeta,
-                this.entityMeta.fields[fieldName] || null, xy, (n, o) => {
+                this.entityMeta.fields[fieldName] || null, null, (n, o) => {
+                    this.finishEditFieldMeta(n, o)
+                })
+        })
+
+        this.$page.on("click", ".copy-field", e => {
+            const $row = $(e.target).closest("tr")
+            const fieldName = $row.attr("field-name")
+            if (!fieldName) return
+            const tmpFieldName = this.generateNextFieldName(fieldName)
+            const tmpFieldMeta = cloneByJSON(this.entityMeta.fields[fieldName])
+            tmpFieldMeta.name = tmpFieldName
+            this.entityMeta.fields[tmpFieldName] = tmpFieldMeta
+
+            $(ST.FieldMetaRow(tmpFieldMeta)).insertAfter($row)
+
+            editFieldMeta(this.entityMeta,
+                this.entityMeta.fields[tmpFieldName] || null, null, (n, o) => {
                     this.finishEditFieldMeta(n, o)
                 })
         })
@@ -89,6 +104,18 @@ export class CreateEditMeta extends Page {
         this.showIndexesTable()
 
         this.switchEntityOrComponent()
+    }
+
+    private generateNextFieldName(fieldName: string) {
+        let next = 1
+        while (true) {
+            const newName = fieldName + next
+            if (this.entityMeta.fields[newName]) {
+                next++
+            } else {
+                return newName
+            }
+        }
     }
 
     private switchEntityOrComponent() {
