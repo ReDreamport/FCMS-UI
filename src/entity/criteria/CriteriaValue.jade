@@ -1,0 +1,28 @@
+//- (fm, fv, multiple)
+include ../../mixin
+
+.criteria-value
+    if fm.inputType === "Select" || fm.inputType === "CheckList"
+        if multiple
+            +CheckList(fm, fv)
+        else
+            select
+                if fm.finalOptions
+                    each o in fm.finalOptions
+                        option(value=o.key, selected=o.key===fv)=o.value
+    else if fm.type === "Reference"
+        a.edit-ref.btn.iconfont.icon-edit(href="javascript:")
+        - var vList = JC.makeSureArray(fv) || []
+            each v in vList
+                +RemovableCriteriaValueItemInput(fm, v)
+    else
+        if multiple
+            - var vList = JC.makeSureArray(fv) || []
+            each v in vList
+                +RemovableCriteriaValueItemInput(fm, v)
+            a.add-value-item.btn.iconfont.icon-add(href="javascript:")
+        else
+            +CriteriaValueItemInput(fm, fv)
+
+        
+

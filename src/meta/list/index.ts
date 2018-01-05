@@ -52,7 +52,8 @@ export class ListMeta extends Page {
                 $entities.iterate($e => {
                     const label = $e.mustFindOne(".entity-label span")
                         .text().toLowerCase()
-                    const name = $e.mustFindOne(".entity-name").text()
+                    const name = $e.mustFindOne(".entity-name")
+                        .text().toLowerCase()
                     if (label.indexOf(keyword) >= 0
                         || name.indexOf(keyword) >= 0) {
                         $e.show()

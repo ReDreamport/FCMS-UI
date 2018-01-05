@@ -45,19 +45,7 @@ mixin FieldAction(actions)
                             else
                                 +FieldInputItem(fm, fv)
                         when "CheckList"
-                            .check-list
-                                if fm.finalOptions
-                                    if fm.multiple
-                                        - var vList = JC.makeSureArray(fv) || []
-                                        each o in fm.finalOptions
-                                            label
-                                                input(type="checkbox", value=o.key, checked=(vList.indexOf(o.key) >=0))
-                                                span=o.value
-                                    else
-                                        each o in fm.finalOptions
-                                            label
-                                                input(type="radio", value=o.key, checked=(fv===o.key))
-                                                span=o.value
+                            +CheckList(fm, fv)
                         //- 为了允许清空，File / Image / Reference 一律当做多值的
                         when "File"
                         when "Image"

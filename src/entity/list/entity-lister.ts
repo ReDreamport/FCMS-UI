@@ -4,6 +4,7 @@ import _ = require("lodash")
 import { alertAjaxIfError, api } from "../../api"
 import { onEnterKeyOrChange, pxToNumber, SYSTEM_FIELDS } from "../../common"
 import { getMeta } from "../../globals"
+import { EntityCriteria } from "../criteria"
 import { loadReferences } from "../digest/index"
 
 export class EntityLister {
@@ -25,6 +26,8 @@ export class EntityLister {
 
     private page: EntityValue[]
 
+    private entityCriteria: EntityCriteria
+
     constructor(private entityName: string, private forSelect: boolean,
         onSelect?: (entity: EntityValue) => void) {
 
@@ -37,6 +40,9 @@ export class EntityLister {
 
         this.$listTable = this.$root.mustFindOne(".list-parent table")
         this.setTableWidth()
+
+        const $cp = this.$root.mustFindOne(".criteria-parent")
+        this.entityCriteria = new EntityCriteria($cp, this.entityMeta)
 
         this.enableSearchAndPaging()
         this.refreshList()
@@ -120,6 +126,17 @@ export class EntityLister {
 
         this.$fastSearch = this.$root.mustFindOne(".fast-search")
         onEnterKeyOrChange(this.$fastSearch, e => this.refreshList())
+
+        const $moreFilter = $paging.mustFindOne(".more-filter")
+        $moreFilter.click(() => {
+            const toShow = !$moreFilter.hasClass("pressed")
+            $moreFilter.toggleClass("pressed")
+            if (toShow) {
+                this.entityCriteria.show()
+            } else {
+                this.entityCriteria.hide()
+            }
+        })
     }
 
     refreshList() {
@@ -130,6 +147,13 @@ export class EntityLister {
         const query: any = {_forConsole: "1",
             _pageNo: pageNo, _pageSize: pageSize}
         if (fastSearch) query._filter = fastSearch
+
+        const items = this.entityCriteria.getInput()
+        console.log("criteria", items)
+        if (items.length) {
+            const criteria = {relation: "and", items}
+            query._criteria = JSON.stringify(criteria)
+        }
 
         const q = api.get(`entity/${this.entityName}`, query)
         alertAjaxIfError(q).then(r => {

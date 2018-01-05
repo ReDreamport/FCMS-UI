@@ -177,3 +177,55 @@ mixin ComponentItem(entityName, multiple, itemValue)
             - var fieldMeta = entityMeta.fields[fn]
             - var fieldValue = itemValue && itemValue[fn]
             td(style=JC.getColumnStyle(fieldMeta))!=JC.displayField(fieldMeta, fieldValue)
+
+mixin CheckList(fm, fv)
+    .check-list
+        if fm.finalOptions
+            if fm.multiple
+                - var vList = JC.makeSureArray(fv) || []
+                each o in fm.finalOptions
+                    label
+                        input(type="checkbox", value=o.key, checked=(vList.indexOf(o.key) >=0))
+                        span=o.value
+            else
+                each o in fm.finalOptions
+                    label
+                        input(type="radio", value=o.key, checked=(fv===o.key))
+                        span=o.value
+
+mixin CriteriaValueItemInput(fm, fv)
+    .criteria-value-item-input(ft=fm.type, fit=fm.inputType)
+        case fm.type
+            when "String"
+            when "ObjectId"
+                input(type="text", value=fv)
+            when "Boolean"
+                input(type="checkbox", checked=fv)
+            when "Int"
+                input(type="number", value=fv)
+            when "Float"
+                input(type="number", value=fv)
+            when "Date"
+                .date-picker(type="Date")
+                    input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "Time"
+                .date-picker(type="Time")
+                    input(type="text", value=JC.formatDate(fv, "HH:mm:ss"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "DateTime"
+                .date-picker(type="DateTime")
+                    input(type="text", value=JC.formatDate(fv, "YYYY-MM-DD HH:mm:ss"))
+                    a.open-calendar.iconfont.icon-calendar(href="javascript:")
+            when "Reference"
+                if (typeof fv === "string")
+                    .ref-item(id=fv)
+                        +LoadingRef(fm.refEntity, fv)
+                else if fv && fv.id
+                    .ref-item(id=fv.id)
+                        +EntityDigest(fv.icon, fv.digest, fv.id, fm.refEntity)
+
+mixin RemovableCriteriaValueItemInput(fm, fv)
+    .removable-criteria-value-item-input
+        +CriteriaValueItemInput(fm, fv)
+        a.iconfont.icon-close-c(href="javascript:")

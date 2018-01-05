@@ -47,6 +47,10 @@ declare const ST: {
     DisplayFieldItem: STFunc;
     EditComponentDialog: STFunc;
     EntityHistoryList: STFunc;
+    EntityCriteria: STFunc;
+    EntityCriteriaItem: STFunc;
+    CriteriaValue: STFunc;
+    RemovableCriteriaValueItemInput: STFunc;
     //
     DatePicker: STFunc;
     RichTextEditorDialog: STFunc;
