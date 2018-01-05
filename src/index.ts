@@ -117,7 +117,7 @@ function initEvents() {
     $(".exit-site").click(function() {
         if (!confirm("确定要退出系统吗？")) return
         const here = encodeURIComponent(location.href)
-        location.href = `/api/sso/client/sign-out?callback=${here}`
+        location.href = `/api/c/sso/client/sign-out?callback=${here}`
     })
 
     $("body").on("click", ".rich-text-preview .edit-rich-text", function() {
