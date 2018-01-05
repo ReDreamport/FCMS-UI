@@ -44,13 +44,14 @@ export class ListMeta extends Page {
         })
 
         function search() {
-            const keyword = $search.stringInput()
+            const keyword = $search.stringInput().toLowerCase()
             const $entities = $page.find(".entity")
             if (!keyword) {
                 $entities.show()
             } else {
                 $entities.iterate($e => {
-                    const label = $e.mustFindOne(".entity-label span").text()
+                    const label = $e.mustFindOne(".entity-label span")
+                        .text().toLowerCase()
                     const name = $e.mustFindOne(".entity-name").text()
                     if (label.indexOf(keyword) >= 0
                         || name.indexOf(keyword) >= 0) {
