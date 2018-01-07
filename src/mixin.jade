@@ -188,9 +188,10 @@ mixin CheckList(fm, fv)
                         input(type="checkbox", value=o.key, checked=(vList.indexOf(o.key) >=0))
                         span=o.value
             else
+                - var id = JC.uniqueId()
                 each o in fm.finalOptions
                     label
-                        input(type="radio", value=o.key, checked=(fv===o.key))
+                        input(type="radio", name=id, value=o.key, checked=(fv===o.key))
                         span=o.value
 
 mixin CriteriaValueItemInput(fm, fv)
@@ -200,7 +201,14 @@ mixin CriteriaValueItemInput(fm, fv)
             when "ObjectId"
                 input(type="text", value=fv)
             when "Boolean"
-                input(type="checkbox", checked=fv)
+                .yes-no
+                    - var id = JC.uniqueId()
+                    label
+                        input(type="radio", name=id, checked=fv, value="true")
+                        | 是
+                    label
+                        input(type="radio", name=id, checked=!fv, value="")
+                        | 否
             when "Int"
                 input(type="number", value=fv)
             when "Float"
@@ -228,4 +236,4 @@ mixin CriteriaValueItemInput(fm, fv)
 mixin RemovableCriteriaValueItemInput(fm, fv)
     .removable-criteria-value-item-input
         +CriteriaValueItemInput(fm, fv)
-        a.iconfont.icon-close-c(href="javascript:")
+        a.remove-cvii.iconfont.icon-close-c(href="javascript:")

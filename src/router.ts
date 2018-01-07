@@ -38,7 +38,7 @@ function configRoute(path: string, PageClass: typeof Page) {
     const $pages = $(".pages")
 
     page(path, function(context) {
-        console.log("page path: " + path)
+        // console.log("page path: " + path)
         if (path === "*") {
             if (context.path.indexOf("//") === 0) {
                 const toPath = context.path.substring(1) // 保留最前面的一个斜线

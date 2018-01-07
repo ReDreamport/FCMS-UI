@@ -15,6 +15,7 @@ interface IdToEntityInfo {
 }
 
 export function selectEntity(fieldMeta: FieldMeta, ids: string[],
+    multiple: boolean,
     callback: (newIds: string[], idToEntityInfo: IdToEntityInfo) => void) {
 
     let ready = false
@@ -24,8 +25,7 @@ export function selectEntity(fieldMeta: FieldMeta, ids: string[],
 
     const idToEntityInfo: IdToEntityInfo = {}
 
-    const jadeCtx = {entityName, label: entityMeta.label,
-        multiple: fieldMeta.multiple}
+    const jadeCtx = {entityName, label: entityMeta.label, multiple}
     const $overlay = $(ST.SelectEntityDialog(jadeCtx)).appendTo($("body"))
     initDialog($overlay, null)
 
@@ -56,12 +56,17 @@ export function selectEntity(fieldMeta: FieldMeta, ids: string[],
     $overlay.mustFindOne(".list-parent").append(entityLister.$root)
 
     function onSelect(entity: EntityValue) {
-        if (!fieldMeta.multiple) $selectedList.empty()
+        if (!multiple) $selectedList.empty()
 
         const digest = digestEntity(entityMeta, entity)
         idToEntityInfo[entity._id] = {entity, digest}
         $selectedList.append(ST.MultipleInputItem({fv: digest, fm: fieldMeta}))
     }
+
+    // 删除已选项
+    $selectedList.on("click", ".remove-m-input-item", function() {
+        $(this).mustClosest(".multiple-input-item").remove()
+    })
 
     $overlay.mustFindOne(".finish").click(function() {
         if (!ready) return

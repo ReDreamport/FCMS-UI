@@ -48,7 +48,6 @@ export function pInitMenu() {
                     const menuGroup2 = cloneByJSON(menuGroup)
                     menuGroup2.menuItems = menuItemsShown
                     menuGroupsShown.push(menuGroup2)
-                    console.log(menuGroup2)
                 }
             }
         }

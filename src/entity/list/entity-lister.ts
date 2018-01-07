@@ -7,6 +7,16 @@ import { getMeta } from "../../globals"
 import { EntityCriteria } from "../criteria"
 import { loadReferences } from "../digest/index"
 
+const DEFAULT_PAGE_SIZE = 20
+
+interface ListQuery {
+    _forConsole: 1
+    _pageNo: number
+    _pageSize: number
+    _filter?: string
+    _criteria?: string
+}
+
 export class EntityLister {
     $root: JQuery
 
@@ -41,17 +51,25 @@ export class EntityLister {
         this.$listTable = this.$root.mustFindOne(".list-parent table")
         this.setTableWidth()
 
-        const $cp = this.$root.mustFindOne(".criteria-parent")
-        this.entityCriteria = new EntityCriteria($cp, this.entityMeta)
-
         this.enableSearchAndPaging()
         this.refreshList()
 
-        this.$root.on("click", ".select-entity", e => {
-            const id = $(e.target).mustClosest("tr").mustAttr("id")
-            const entity = this.page.find(v => v._id === id)
-            if (onSelect) onSelect(entity as EntityValue)
-        })
+        if (forSelect && onSelect) {
+            this.$listTable.on("click", ".select-entity", e => {
+                e.stopPropagation()
+                e.stopImmediatePropagation()
+                const id = $(e.target).mustClosest("tr").mustAttr("id")
+                const entity = this.page.find(v => v._id === id)
+                onSelect(entity as EntityValue)
+            })
+
+            // 单击行，也选中
+            this.$listTable.on("click", "tbody tr", e => {
+                const id = $(e.target).mustClosest("tr").mustAttr("id")
+                const entity = this.page.find(v => v._id === id)
+                onSelect(entity as EntityValue)
+            })
+        }
 
         const $checkAll = this.$root.find(".check-all")
         $checkAll.click(() => {
@@ -95,11 +113,23 @@ export class EntityLister {
         this.$listTable.width(tableWidth)
     }
 
+    private getCachedQuery() {
+        const cacheQueryStr = localStorage.getItem(this.queryStoreKey())
+        const cacheQuery: ListQuery
+            = cacheQueryStr && JSON.parse(cacheQueryStr)
+                || {_pageNo: 1, _pageSize: DEFAULT_PAGE_SIZE}
+        return cacheQuery
+    }
+
     private enableSearchAndPaging() {
+        const cacheQuery = this.getCachedQuery()
+
         const $paging = this.$root.mustFindOne(".paging-parent")
 
         this.$pageNo = $paging.mustFindOne("input.page-no")
+            .val(cacheQuery._pageNo)
         this.$pageSize = $paging.mustFindOne("input.page-size")
+            .val(cacheQuery._pageSize)
         this.$pageNum = $paging.mustFindOne(".page-num")
         this.$total = $paging.mustFindOne(".total")
 
@@ -125,7 +155,16 @@ export class EntityLister {
         onEnterKeyOrChange(this.$pageSize, e => this.refreshList())
 
         this.$fastSearch = this.$root.mustFindOne(".fast-search")
+            .val(cacheQuery._filter || "")
         onEnterKeyOrChange(this.$fastSearch, e => this.refreshList())
+
+        const criteria = cacheQuery._criteria
+            && JSON.parse(cacheQuery._criteria) || undefined
+
+        const $cp = this.$root.mustFindOne(".criteria-parent")
+        this.entityCriteria = new EntityCriteria($cp, this.entityMeta,
+            () => this.refreshList(),
+            criteria && criteria.items)
 
         const $moreFilter = $paging.mustFindOne(".more-filter")
         $moreFilter.click(() => {
@@ -144,7 +183,7 @@ export class EntityLister {
         const pageSize = this.$pageSize.intInput(20)
         const fastSearch = this.$fastSearch.stringInput()
 
-        const query: any = {_forConsole: "1",
+        const query: ListQuery = {_forConsole: 1,
             _pageNo: pageNo, _pageSize: pageSize}
         if (fastSearch) query._filter = fastSearch
 
@@ -154,6 +193,8 @@ export class EntityLister {
             const criteria = {relation: "and", items}
             query._criteria = JSON.stringify(criteria)
         }
+
+        localStorage.setItem(this.queryStoreKey(), JSON.stringify(query))
 
         const q = api.get(`entity/${this.entityName}`, query)
         alertAjaxIfError(q).then(r => {
@@ -175,5 +216,9 @@ export class EntityLister {
 
             loadReferences(this.$listTable)
         })
+    }
+
+    private queryStoreKey() {
+        return `list-${this.forSelect}-${this.entityName}-query`
     }
 }

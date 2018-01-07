@@ -7,8 +7,17 @@
     border 1px solid cBlue0 - 5%
     border-radius 4px
 
+    .overview
+        color cRed
+        line-height 30px
+        text-align center
+
     .details
         padding 8px
+        overflow auto
+
+        table
+            border none
 
     .add-item
         display block
@@ -18,42 +27,39 @@
         margin 6px auto
 
     .entity-criteria-item
-        margin-bottom 8px
+        margin-bottom 6px
 
-        .field-name-col
-        .operator-col
-        .criteria-value-col
-        .remove-item
-            box-sizing border-box
+        .remove-item, .field-name-col, .operator-col, .criteria-value-col
             display inline-block
             vertical-align top
-        
-        .remove-item
-            width 5%
-            text-align right
+            box-sizing border-box
+
+       .remove-item
+            width 30px
+            text-align center
             font-size 16px
+            text-decoration none
+            padding 0
 
         .field-name-col
-            width 17%
-            padding-right 8px
-            
+            width 120px
+            padding-right 6px
             .field-name
                 width 100%
                 
         .operator-col
-            width 15%
-            padding-right 8px
-            
+            width 100px
+            padding-right 6px
             .operator
                 width 100%
-
+    
         .criteria-value-col
-            width 63%
+            width 600px
 
-        .add-value-item
+        .add-value-item, .edit-ref
             display inline-block
             hh(22px)
-            margin ((btnHeight - 22px) / 2) 0
+            margin ((inputHeight - 22px) / 2) 0
             font-size 12px
             padding 0 6px
             border-radius 8px
@@ -61,3 +67,29 @@
             &:before
                 position relative
                 top -1px
+
+    .criteria-value-item-input
+        display inline-block
+        vertical-align top
+    
+    .removable-criteria-value-item-input
+        display inline-block
+        vertical-align top
+        hh(inputHeight)
+        margin-right 8px
+
+        .remove-cvii
+            display inline-block
+            vertical-align middle
+            text-decoration none
+            margin-left 2px
+            font-size 14px
+            width 20px
+            text-align center
+
+    .check-list, .yes-no
+        label
+            margin-right 12px
+
+        input
+            margin-right 4px

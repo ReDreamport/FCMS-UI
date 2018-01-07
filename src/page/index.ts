@@ -6,24 +6,28 @@ export class Page {
     }
 
     pLoadData(): Promise<any | void> {
-        console.log("Load data for " + this.routeCtx.path)
+        // console.log("Load data for " + this.routeCtx.path)
+        this.$pageParent.find("")
         return Promise.resolve()
     }
 
     pBuild(): void | Promise<any> {
-        console.log("Build " + this.routeCtx.path)
+        this.$pageParent.find("")
+        // console.log("Build " + this.routeCtx.path)
     }
 
     afterShow() {
-        console.log("After showing " + this.routeCtx.path)
+        this.$pageParent.find("")
+        // console.log("After showing " + this.routeCtx.path)
     }
 
     beforeHide() {
-        console.log("Before hiding " + this.routeCtx.path)
+        this.$pageParent.find("")
+        // console.log("Before hiding " + this.routeCtx.path)
     }
 
     close() {
-        console.log("Close " + this.routeCtx.path)
+        // console.log("Close " + this.routeCtx.path)
         this.$pageParent.remove()
         this.$pageSwitch.remove()
     }

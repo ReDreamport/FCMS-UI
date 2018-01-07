@@ -3,7 +3,7 @@
     .field-name-col
         select.field-name
             each field in fieldNames
-                option(value=field, selected=field===(item && item.field))=entityMeta.fields[field].label
+                option(value=field, selected=field===(ci && ci.field))=entityMeta.fields[field].label
     .operator-col
         select.operator
     .criteria-value-col
