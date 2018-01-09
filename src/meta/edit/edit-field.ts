@@ -54,12 +54,12 @@ const typeInputPersist = {
     },
     Image: {
         input: ["Image"],
-        mongodb: ["String"],
+        mongodb: ["Document"],
         mysql: ["varchar"]
     },
     File: {
         input: ["File"],
-        mongodb: ["String"],
+        mongodb: ["Document"],
         mysql: ["varchar"]
     },
     Component: {
