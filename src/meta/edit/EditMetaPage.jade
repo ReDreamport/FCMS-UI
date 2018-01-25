@@ -49,8 +49,9 @@ include ../../mixin
                     input(type="text", value=entityMeta.dbName)
                 +Field("tableName", "表名")
                     input(type="text", value=entityMeta.tableName)
+            - var indexTip = "字段列表格式：字段前缀+或-，如 +name+age+school"
             .row
-                +Field("mongoIndexes", "MongoDB 索引", "", "p100", "no-auto-collect")
+                +Field("mongoIndexes", "MongoDB 索引", indexTip, "p100", "no-auto-collect")
                     .field-actions
                         a.add-mongo-index.btn(href="javascript:") 添加
                     table.for-input.fix
@@ -64,7 +65,7 @@ include ../../mixin
                                 th(style="width: 150px;") 错误消息
                         tbody.mongo-indexes
             .row
-                +Field("mysqlIndexes", "MySQL 索引", "", "p100", "no-auto-collect")
+                +Field("mysqlIndexes", "MySQL 索引", indexTip, "p100", "no-auto-collect")
                     .field-actions
                         a.add-mysql-index.btn(href="javascript:") 添加
                     table.for-input.fix

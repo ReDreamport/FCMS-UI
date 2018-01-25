@@ -11,6 +11,11 @@ import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
 import { editFieldMeta } from "./edit-field"
 
+interface IndexField {
+    order: string
+    field: string
+}
+
 const ValidDigestFieldTypes = ["String", "Boolean", "Int", "Float",
     "Date", "Time", "DateTime", "Reference"]
 
@@ -292,9 +297,10 @@ export class CreateMeta extends CreateEditMeta {
     }
 }
 
+// 字段列表格式：字段前缀+或-，如 +name+age+school
 function parseIndexFields(fieldsString: string, entityMeta: EntityMeta) {
     const tp = /([+\-]\w+)/g
-    const fields: {order: string; field: string}[] = []
+    const fields: IndexField[] = []
     let match = tp.exec(fieldsString)
     while (match) {
         const m = match[1]
