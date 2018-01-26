@@ -218,9 +218,13 @@ export function checkFieldInput(fieldMeta: any, entityMeta: EntityMeta) {
         throw new Error("持久化类型与逻辑类型不匹配")
     }
 
-    if (entityMeta.db === "mysql" && !noSQLColMType(persistType)
-        && !(fieldMeta.sqlColM > 0)) {
-        throw new Error("SQL列宽必须大于零")
+    if (entityMeta.db === "mysql") {
+        if (!noSQLColMType(persistType) && !(fieldMeta.sqlColM > 0)) {
+            throw new Error("SQL列宽必须大于零")
+        }
+        if (fieldMeta.multiple) {
+            throw new Error("MySQL存储不支持多值")
+        }
     }
 
     const validInputTypes = typeInputPersist.input
