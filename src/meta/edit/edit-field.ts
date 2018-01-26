@@ -86,6 +86,7 @@ const typesInputPersist = {
     }
 }
 
+// TODO 特别在 MYSQL，引用字段的存粗类型应该匹配参考实体的IDE类型，输入时自动填写；保存时应校验
 export function editFieldMeta(entityMeta: EntityMeta,
     fieldMeta: FieldMeta | null,
     dialogOpenOrigin: {left: number; top: number} | null,
