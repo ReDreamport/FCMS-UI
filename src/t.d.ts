@@ -93,27 +93,25 @@ interface EntityValue {
 }
 
 interface FieldMeta {
+    system: boolean
     name: string
     label: string
     type: string
     refEntity: string
     inputType: string
     persistType: string
-    multiple: boolean
-    fastSearch: boolean
-    hideInListPage: boolean
-    notShow: boolean
-    noCreate: boolean
-    noEdit: boolean
+    sqlColM?: number
+    multiple?: boolean
+    fastSearch?: boolean
+    hideInListPage?: boolean
     inputFunc?: string
-    optionsDependOnField?: string
-    optionsFunc?: string
-    optionWidth?: number
     useGuide?: string
     textOptions?: string[]
     kvOptions?: KeyValuePair[]
     finalOptions?: KeyValuePair[]
     showInListPage?: boolean
+    hideInCreatePage?: boolean
+    inEditPage?: string
 }
 
 interface EntityMeta {

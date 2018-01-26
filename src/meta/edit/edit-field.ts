@@ -11,7 +11,9 @@ import { initDialog } from "../../dialog"
 import { getMeta } from "../../globals"
 import { toastError } from "../../toast"
 
-const typeInputPersist = {
+const ObjectIdStringLength = 24
+
+const typesInputPersist = {
     String: {
         input: ["Text", "TextArea", "RichText", "Select", "CheckList"],
         mongodb: ["String"],
@@ -100,13 +102,9 @@ export function editFieldMeta(entityMeta: EntityMeta,
     const $overlay = $(ST.EditFieldDialog(jadeCtx)).appendTo($("body"))
 
     const $type = $overlay.mustFindOne(".for-type")
-    const $input = $overlay.mustFindOne(".for-input-type")
-    const $persist = $overlay.mustFindOne(".for-persist-type")
 
     $type.on("change", function() {
-        onTypeChange(entityMeta, $type,
-            $input, fieldMeta && fieldMeta.inputType,
-            $persist, fieldMeta && fieldMeta.persistType)
+        onTypeChange(entityMeta, $type, $overlay, fieldMeta)
     })
 
     // 保存
@@ -129,7 +127,7 @@ export function editFieldMeta(entityMeta: EntityMeta,
         })
 
         try {
-            checkInput(newFM)
+            checkFieldInput(newFM, entityMeta)
         } catch (e) {
             toastError(e.message)
             return
@@ -144,9 +142,7 @@ export function editFieldMeta(entityMeta: EntityMeta,
     initKvOptions($overlay, fieldMeta)
 
     // 初始化
-    onTypeChange(entityMeta, $type,
-        $input, fieldMeta && fieldMeta.inputType,
-        $persist, fieldMeta && fieldMeta.persistType)
+    onTypeChange(entityMeta, $type, $overlay, fieldMeta)
 
 
     initDialog($overlay, dialogOpenOrigin)
@@ -197,24 +193,65 @@ function initKvOptions($overlay: JQuery, fieldMeta: FieldMeta | null) {
     })
 }
 
-function checkInput(fieldMeta: any) {
-    if (!fieldMeta.name)
-        throw new Error("名字不能为空")
+export function checkFieldInput(fieldMeta: any, entityMeta: EntityMeta) {
+    if (!fieldMeta.name) throw new Error("名字不能为空")
     if (!(fieldMeta.name.match(/^[_a-zA-Z0-9]+$/)))
-        throw new Error("名字包含非法字符")
+        throw new Error("名字只能是字母数字下划线")
+
+    if (!fieldMeta.label) throw new Error("显示名不能为空")
+
+    const type = fieldMeta.type
+    if (!type) throw new Error("类型不能为空")
+
+    if ((type === "Component" || type === "Reference")
+        && !fieldMeta.refEntity) {
+        throw new Error("关联实体/组件不能为空")
+    }
+
+    const typeInputPersist = (typesInputPersist as any)[fieldMeta.type]
+
+    const persistType = fieldMeta.persistType
+    if (!persistType) throw new Error("持久化类型不能为空")
+    const validPersistTypes = typeInputPersist[entityMeta.db]
+    if (validPersistTypes
+        && validPersistTypes.indexOf(persistType) < 0) {
+        throw new Error("持久化类型与逻辑类型不匹配")
+    }
+
+    if (entityMeta.db === "mysql" && !noSQLColMType(persistType)
+        && !(fieldMeta.sqlColM > 0)) {
+        throw new Error("SQL列宽必须大于零")
+    }
+
+    const validInputTypes = typeInputPersist.input
+    if (validInputTypes
+        && validInputTypes.indexOf(fieldMeta.inputType) < 0) {
+        throw new Error("输入类型与逻辑类型不匹配")
+    }
 }
 
-function onTypeChange(entityMeta: EntityMeta, $type: JQuery,
-    $input: JQuery, initInputType: string | null,
-    $persist: JQuery, initPersistType: string | null) {
-    const type = $type.val() as string
-    const inputPersist = (typeInputPersist as any)[type]
+function noSQLColMType(persistType: string) {
+    return persistType === "time" || persistType === "datetime"
+        || persistType === "timestamp"
+}
 
-    const inputType = $input.val() || initInputType
+function onTypeChange(entityMeta: EntityMeta, $type: JQuery, $overlay: JQuery,
+    initFieldMeta: FieldMeta | null) {
+
+    const $input = $overlay.mustFindOne(".for-input-type")
+    const $persist = $overlay.mustFindOne(".for-persist-type")
+    const $sqlColM = $overlay.mustFindOne(".sql-col-m")
+
+    const type = $type.val() as string
+    const inputPersist = (typesInputPersist as any)[type]
+
+    const inputType = $input.val()
+        || (initFieldMeta && initFieldMeta.inputType)
     replaceSelectOptionsByStringArray($input, inputPersist.input)
     if (inputType) $input.val(inputType)
 
-    const persistType = $persist.val() || initPersistType
+    const persistType = $persist.val()
+        || (initFieldMeta && initFieldMeta.persistType)
     if (entityMeta.db === "mongodb") {
        replaceSelectOptionsByStringArray($persist, inputPersist.mongodb)
     } else if (entityMeta.db === "mysql") {
@@ -223,4 +260,78 @@ function onTypeChange(entityMeta: EntityMeta, $type: JQuery,
         $persist.empty()
     }
     if (persistType) $persist.val(persistType)
+
+    if (entityMeta.db === "mysql") {
+        if (type === "Image" || type === "File") {
+            $sqlColM.val(200)
+        } else if (type === "ObjectId") {
+            $sqlColM.val(ObjectIdStringLength)
+        }
+    }
+}
+
+export function systemFieldsForCommon(fields: {[fn: string]: FieldMeta}) {
+    fields._id = fields._id || {
+        system: true, name: "_id", label: "ID",
+        type: "", persistType: "",
+        inputType: "Text", hideInCreatePage: true, inEditPage: "hide",
+        fastSearch: true
+    }
+    fields._version = fields._version || {
+        system: true, name: "_version", label: "修改版本",
+        type: "Int", persistType: "",
+        inputType: "Int", hideInCreatePage: true, inEditPage: "hide"
+    }
+    fields._createdOn = fields._createdOn || {
+        system: true, name: "_createdOn", label: "创建时间",
+        type: "DateTime", persistType: "",
+        inputType: "DateTime", hideInCreatePage: true, inEditPage: "hide",
+        showInListPage: true
+    }
+    fields._modifiedOn = fields._modifiedOn || {
+        system: true, name: "_modifiedOn", label: "修改时间",
+        type: "DateTime", persistType: "",
+        inputType: "DateTime", hideInCreatePage: true, inEditPage: "hide",
+        showInListPage: true
+    }
+    fields._createdBy = fields._createdBy || {
+        system: true, name: "_createdBy", label: "创建人",
+        type: "Reference",  persistType: "", refEntity: "F_User",
+        inputType: "Reference", hideInCreatePage: true, inEditPage: "hide"
+    }
+    fields._modifiedBy = fields._modifiedBy || {
+        system: true, name: "_modifiedBy", label: "修改人",
+        type: "Reference", persistType: "", refEntity: "F_User",
+        inputType: "Reference", hideInCreatePage: true, inEditPage: "hide"
+    }
+}
+
+export function systemFieldsForMongo(fields: {[fn: string]: FieldMeta}) {
+    fields._id.type = "ObjectId"
+    fields._id.persistType = "ObjectId"
+
+    fields._version.persistType = "Number"
+
+    fields._createdOn.persistType = "Date"
+    fields._modifiedOn.persistType = "Date"
+
+    fields._createdBy.persistType = "String"
+    fields._modifiedBy.persistType = "String"
+}
+
+export function systemFieldsForMySQL(fields: {[fn: string]: FieldMeta}) {
+    fields._id.type = "String"
+    fields._id.persistType = "char"
+    fields._id.sqlColM = ObjectIdStringLength
+
+    fields._version.persistType = "int"
+    fields._version.sqlColM = 12
+
+    fields._createdOn.persistType = "timestamp"
+    fields._modifiedOn.persistType = "timestamp"
+
+    fields._createdBy.persistType = "char"
+    fields._createdBy.sqlColM = ObjectIdStringLength
+    fields._modifiedBy.persistType = "char"
+    fields._modifiedBy.sqlColM = ObjectIdStringLength
 }

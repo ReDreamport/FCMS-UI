@@ -9,7 +9,8 @@ import { cloneByJSON, collectInputByFieldName } from "../../common"
 import { Page } from "../../page"
 import { closeByKey } from "../../router"
 import { toastError, toastSuccess } from "../../toast"
-import { editFieldMeta } from "./edit-field"
+import { checkFieldInput, editFieldMeta, systemFieldsForCommon,
+    systemFieldsForMongo, systemFieldsForMySQL } from "./edit-field"
 
 interface IndexField {
     order: string
@@ -26,30 +27,34 @@ export class CreateEditMeta extends Page {
     private $page: JQuery
     private $tbodyFields: JQuery
     private $metaType: JQuery
+    private $selectDB: JQuery
 
     pBuild() {
         this.$page = $(ST.EditMetaPage({entityMeta: this.entityMeta}))
             .appendTo(this.$pageParent)
         this.$tbodyFields = this.$page.mustFindOne("tbody.fields")
 
+        // 添加 MongoDB 索引
         this.$page.mustFindOne(".add-mongo-index").click(() => {
             this.addMongoIndex()
         })
 
+        // 添加 MySQL 索引
         this.$page.mustFindOne(".add-mysql-index").click(() => {
             this.addMySQLIndex()
         })
 
-        const $addField = this.$page.mustFindOne(".add-field")
-        $addField.click(() => {
+        // 删除 MongoDB MySQL 索引
+        this.$page.on("click", ".remove-row", e => {
+            $(e.target).closest("tr").remove()
+        })
+
+        // 添加字段
+        this.$page.mustFindOne(".add-field").click(() => {
             this.addFieldRow()
             editFieldMeta(this.entityMeta, null, null, (n, o) => {
                 this.finishEditFieldMeta(n, o)
             })
-        })
-
-        this.$page.on("click", ".remove-row", e => {
-            $(e.target).closest("tr").remove()
         })
 
         // 删除字段
@@ -76,6 +81,7 @@ export class CreateEditMeta extends Page {
                 })
         })
 
+        // 拷贝字段
         this.$page.on("click", ".copy-field", e => {
             const $row = $(e.target).closest("tr")
             const fieldName = $row.attr("field-name")
@@ -93,19 +99,29 @@ export class CreateEditMeta extends Page {
                 })
         })
 
+        // 字段排序
         Sortable.create(this.$tbodyFields[0], {animation: 300})
 
+        // 修改：实体还是组件
         this.$metaType = this.$page.mustFindOne(".meta-type")
         this.$metaType.change(() => {
             this.switchEntityOrComponent()
         })
 
+        // 选择数据库类型
+        this.$selectDB = this.$page.mustFindOne(".select-db")
+        this.$selectDB.change(() => {
+            this.onDBChanged()
+        })
+
+        // 保存
         this.$page.mustFindOne(".save").click(() => {
             this.save()
         })
 
         // main
         this.showFieldsTable()
+        this.onDBChanged() // 必须先调用上面的方法
         this.showIndexesTable()
 
         this.switchEntityOrComponent()
@@ -188,7 +204,7 @@ export class CreateEditMeta extends Page {
         alertAjaxIfError(q).then(() => {
             toastSuccess("保存成功!")
             closeByKey(this.routeCtx.path)
-            setTimeout(() => {location.reload()}, 100)
+            setTimeout(() => {location.reload()}, 1000)
         })
     }
 
@@ -246,20 +262,25 @@ export class CreateEditMeta extends Page {
         newEntityMeta.mongoIndexes = mongoIndexes
         newEntityMeta.mysqlIndexes = mysqlIndexes
 
-        // fields 按顺序取一遍
-        const fields = newEntityMeta.fields
-        newEntityMeta.fields = {}
+        checkFieldsInput(newEntityMeta)
+
+        this.readFieldsTable(newEntityMeta)
+
+        return newEntityMeta
+    }
+
+    // fields 按顺序取一遍；取表格上的布尔值
+    private readFieldsTable(entityMeta: EntityMeta) {
+        const fields = entityMeta.fields
+        entityMeta.fields = {}
         this.$tbodyFields.find("tr").iterate($tr => {
             const fieldName = $tr.mustAttr("field-name")
             const fm = fields[fieldName]
-            newEntityMeta.fields[fieldName] = fm
+            entityMeta.fields[fieldName] = fm
 
             fm.fastSearch = $tr.mustFindOne(".fast-search").prop("checked")
             fm.showInListPage = $tr.mustFindOne(".show-list").prop("checked")
         })
-
-        console.log(newEntityMeta)
-        return newEntityMeta
     }
 
     private checkIndexConfig(ic: any) {
@@ -269,6 +290,23 @@ export class CreateEditMeta extends Page {
         if (!ic.fields) throw new Error("索引字段列表不能为空")
         ic.fields = parseIndexFields(ic.fields, this.entityMeta)
         if (!ic.fields.length) throw new Error("索引字段列表不能为空")
+    }
+
+    private onDBChanged() {
+        const type = this.$metaType.val() as string
+        if (type !== "Entity") return
+
+        const db = (this.$selectDB.val() as string) || "mongodb"
+        this.entityMeta.db = db
+        const fields = this.entityMeta.fields
+        systemFieldsForCommon(fields)
+        if (db === "mongodb") {
+            systemFieldsForMongo(fields)
+        } else if (db === "mysql") {
+            systemFieldsForMySQL(fields)
+        }
+        this.readFieldsTable(this.entityMeta)
+        this.showFieldsTable()
     }
 }
 
@@ -285,7 +323,7 @@ export class EditMeta extends CreateEditMeta {
 }
 export class CreateMeta extends CreateEditMeta {
     pLoadData() {
-        const q = api.get("meta-empty")
+        const q = api.get("meta-empty?db=mongodb")
         return alertAjaxIfError(q).then(em => this.entityMeta = em)
     }
     pBuild() {
@@ -311,4 +349,16 @@ function parseIndexFields(fieldsString: string, entityMeta: EntityMeta) {
         match = tp.exec(fieldsString)
     }
     return fields
+}
+
+function checkFieldsInput(newEntityMeta: EntityMeta) {
+    const fieldNames = Object.keys(newEntityMeta.fields)
+    for (const fieldName of fieldNames) {
+        const fieldMeta = newEntityMeta.fields[fieldName]
+        try {
+            checkFieldInput(fieldMeta, newEntityMeta)
+        } catch (e) {
+            throw new Error(`[${fieldName}] ${e.message}`)
+        }
+    }
 }

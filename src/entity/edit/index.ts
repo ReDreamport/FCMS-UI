@@ -349,7 +349,7 @@ function editReference($mi: JQuery, fieldMeta: FieldMeta) {
         ids.push(id)
     })
 
-    selectEntity(fieldMeta, ids, fieldMeta.multiple, (newIds, idToInfo) => {
+    selectEntity(fieldMeta, ids, !!fieldMeta.multiple, (newIds, idToInfo) => {
         $mi.empty()
         for (const id of newIds) {
             const info = idToInfo[id]

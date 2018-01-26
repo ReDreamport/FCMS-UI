@@ -43,8 +43,8 @@ include ../../mixin
             .section-title 存储
             .row
                 +Field("db", "数据库类型")
-                    - console.log("db: "+entityMeta.db)
-                    +Select([["mongodb", "MongoDB"], ["mysql", "MySQL"], ["none", "不使用数据库"]], entityMeta.db)
+                    - console.log("db: " + entityMeta.db)
+                    +Select([["mongodb", "MongoDB"], ["mysql", "MySQL"], ["none", "不使用数据库"]], entityMeta.db, "select-db")
                 +Field("dbName", "数据库名")
                     input(type="text", value=entityMeta.dbName)
                 +Field("tableName", "表名")

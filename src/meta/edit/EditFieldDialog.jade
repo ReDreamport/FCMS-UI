@@ -20,7 +20,7 @@ include ../../mixin
                             input(type="text", value=fieldMeta.label)
                         +Field("type", "类型")
                             +Select(fieldTypesOptions, fieldMeta.type, "for-type")
-                        +Field("refEntity", "关联实体")
+                        +Field("refEntity", "关联实体/组件")
                             +Select(entityOptions, fieldMeta.refEntity)
                         +Field("multiple", "多值的")
                             input(type="checkbox", checked=fieldMeta.multiple)
@@ -30,9 +30,7 @@ include ../../mixin
                         +Field("persistType", "持久化类型")
                             +Select([], fieldMeta.persistType, "for-persist-type")
                         +Field("sqlColM", "SQL列宽")
-                            input(type="number", value=fieldMeta.sqlColM)
-                        +Field("fileStoreDir", "文件存储目录")
-                            input(type="text", value=fieldMeta.fileStoreDir)
+                            input.sql-col-m(type="number", value=fieldMeta.sqlColM)
 
                 .section
                     .section-title 显示
