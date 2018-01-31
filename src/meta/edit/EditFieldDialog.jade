@@ -21,7 +21,7 @@ include ../../mixin
                         +Field("type", "类型")
                             +Select(fieldTypesOptions, fieldMeta.type, "for-type")
                         +Field("refEntity", "关联实体/组件")
-                            +Select(entityOptions, fieldMeta.refEntity)
+                            +Select(entityOptions, fieldMeta.refEntity, "for-ref-entity")
                         +Field("multiple", "多值的")
                             input(type="checkbox", checked=fieldMeta.multiple)
                 .section

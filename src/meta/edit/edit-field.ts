@@ -3,10 +3,12 @@
 import $ = require("jquery")
 import Sortable = require("sortablejs")
 
-import { collectInputByFieldName, FIELD_TYPES,
+import {
+    collectInputByFieldName, FIELD_TYPES,
     isEnterKey,
     replaceSelectOptionsByStringArray,
-    stringArrayToOptionArray } from "../../common"
+    stringArrayToOptionArray
+} from "../../common"
 import { initDialog } from "../../dialog"
 import { getMeta } from "../../globals"
 import { toastError } from "../../toast"
@@ -70,9 +72,7 @@ const typesInputPersist = {
         mysql: ["text", "blob"]
     },
     Reference: {
-        input: ["Reference"],
-        mongodb: ["ObjectId"],
-        mysql: ["varchar", "char"]
+        input: ["Reference"] // 持久化类型取决于引用实体的 ID 类型
     },
     Object: {
         input: ["JSON"],
@@ -89,7 +89,7 @@ const typesInputPersist = {
 // TODO 特别在 MYSQL，引用字段的存粗类型应该匹配参考实体的IDE类型，输入时自动填写；保存时应校验
 export function editFieldMeta(entityMeta: EntityMeta,
     fieldMeta: FieldMeta | null,
-    dialogOpenOrigin: {left: number; top: number} | null,
+    dialogOpenOrigin: { left: number; top: number } | null,
     callback: (newFM: FieldMeta, oldFM: FieldMeta | null) => void) {
 
     const meta = getMeta()
@@ -98,14 +98,22 @@ export function editFieldMeta(entityMeta: EntityMeta,
     const entityNames = Object.keys(meta.entities)
     entityNames.splice(0, 0, "")
     const entityOptions = stringArrayToOptionArray(entityNames)
-    const jadeCtx = {fieldTypesOptions, entityOptions,
-        fieldMeta: fieldMeta || {}}
+    const jadeCtx = {
+        fieldTypesOptions, entityOptions,
+        fieldMeta: fieldMeta || {}
+    }
     const $overlay = $(ST.EditFieldDialog(jadeCtx)).appendTo($("body"))
 
     const $type = $overlay.mustFindOne(".for-type")
+    const $refEntity = $overlay.mustFindOne(".for-ref-entity")
 
     $type.on("change", function() {
         onTypeChange(entityMeta, $type, $overlay, fieldMeta)
+    })
+
+    // 修改关联实体类型后，根据关联实体的ID的持久化类型修改持久化类型
+    $refEntity.on("change", function() {
+        onRefEntityChanged(entityMeta, $overlay)
     })
 
     // 保存
@@ -124,7 +132,7 @@ export function editFieldMeta(entityMeta: EntityMeta,
         $overlay.find(".kv-options .option").iterate($o => {
             const key = $o.mustFindOne(".key").stringInput()
             const value = $o.mustFindOne(".value").stringInput()
-            newFM.kvOptions.push({key, value})
+            newFM.kvOptions.push({ key, value })
         })
 
         try {
@@ -144,7 +152,7 @@ export function editFieldMeta(entityMeta: EntityMeta,
 
     // 初始化
     onTypeChange(entityMeta, $type, $overlay, fieldMeta)
-
+    onRefEntityChanged(entityMeta, $overlay)
 
     initDialog($overlay, dialogOpenOrigin)
 }
@@ -154,18 +162,18 @@ function initTextOptions($overlay: JQuery, fieldMeta: FieldMeta | null) {
 
     if (fieldMeta && fieldMeta.textOptions) {
         for (const text of fieldMeta.textOptions) {
-           $list.append(ST.TextOption({text}))
+            $list.append(ST.TextOption({ text }))
         }
     }
 
-    Sortable.create($list[0], {handle: ".move-handle", animation: 300})
+    Sortable.create($list[0], { handle: ".move-handle", animation: 300 })
 
     $overlay.mustFindOne(".text-options input.new-option").on("keydown", e => {
         if (!isEnterKey(e)) return
         const $i = $(e.target)
         const text = $i.stringInput()
         if (!text) return
-        $list.append(ST.TextOption({text}))
+        $list.append(ST.TextOption({ text }))
         $i.val("")
     })
 
@@ -181,11 +189,11 @@ function initKvOptions($overlay: JQuery, fieldMeta: FieldMeta | null) {
 
     if (fieldMeta && fieldMeta.kvOptions) {
         for (const o of fieldMeta.kvOptions) {
-           $addBtn.before(ST.KvOption(o))
+            $addBtn.before(ST.KvOption(o))
         }
     }
 
-    Sortable.create($list[0], {handle: ".move-handle", animation: 300})
+    Sortable.create($list[0], { handle: ".move-handle", animation: 300 })
 
     $addBtn.on("click", e => { $addBtn.before(ST.KvOption({})) })
 
@@ -255,27 +263,60 @@ function onTypeChange(entityMeta: EntityMeta, $type: JQuery, $overlay: JQuery,
     replaceSelectOptionsByStringArray($input, inputPersist.input)
     if (inputType) $input.val(inputType)
 
-    const persistType = $persist.val()
-        || (initFieldMeta && initFieldMeta.persistType)
-    if (entityMeta.db === "mongodb") {
-       replaceSelectOptionsByStringArray($persist, inputPersist.mongodb)
-    } else if (entityMeta.db === "mysql") {
-        replaceSelectOptionsByStringArray($persist, inputPersist.mysql)
+    if (type === "Reference") {
+        // 持久化类型固定为被引用的实体的 ID 类型
+        onRefEntityChanged(entityMeta, $overlay)
     } else {
-        $persist.empty()
-    }
-    if (persistType) $persist.val(persistType)
+        const persistType = $persist.val()
+            || (initFieldMeta && initFieldMeta.persistType)
+        if (entityMeta.db === "mongodb") {
+            replaceSelectOptionsByStringArray($persist, inputPersist.mongodb)
+        } else if (entityMeta.db === "mysql") {
+            replaceSelectOptionsByStringArray($persist, inputPersist.mysql)
+        } else {
+            $persist.empty()
+        }
+        if (persistType) $persist.val(persistType)
 
-    if (entityMeta.db === "mysql") {
-        if (type === "Image" || type === "File") {
-            $sqlColM.val(200)
-        } else if (type === "ObjectId") {
-            $sqlColM.val(ObjectIdStringLength)
+        if (entityMeta.db === "mysql") {
+            if (type === "Image" || type === "File") {
+                $sqlColM.val(200)
+            } else if (type === "ObjectId") {
+                $sqlColM.val(ObjectIdStringLength)
+            }
         }
     }
 }
 
-export function systemFieldsForCommon(fields: {[fn: string]: FieldMeta}) {
+function onRefEntityChanged(entityMeta: EntityMeta, $overlay: JQuery) {
+    const $type = $overlay.mustFindOne(".for-type")
+    const $refEntity = $overlay.mustFindOne(".for-ref-entity")
+    const $persist = $overlay.mustFindOne(".for-persist-type")
+    const $sqlColM = $overlay.mustFindOne(".sql-col-m")
+
+    const type = $type.val() as string
+    if (type !== "Reference") return
+
+    const refEntity = $refEntity.val() as string
+    const refEntityIdMeta = getRefEntityIdMeta(refEntity)
+    if (refEntityIdMeta) {
+        replaceSelectOptionsByStringArray($persist,
+            [refEntityIdMeta.persistType])
+        $sqlColM.val(refEntityIdMeta.sqlColM || 0)
+    } else {
+        replaceSelectOptionsByStringArray($persist, [])
+        $sqlColM.val(0)
+    }
+}
+
+function getRefEntityIdMeta(refEntity: string | null) {
+    if (!refEntity) return null
+    const refEntityMeta = getMeta().entities[refEntity]
+    if (!refEntityMeta) return null
+    return refEntityMeta.fields._id
+}
+
+export function systemFieldsForCommon(fields: { [fn: string]: FieldMeta }) {
     fields._id = fields._id || {
         system: true, name: "_id", label: "ID",
         type: "", persistType: "",
@@ -301,7 +342,7 @@ export function systemFieldsForCommon(fields: {[fn: string]: FieldMeta}) {
     }
     fields._createdBy = fields._createdBy || {
         system: true, name: "_createdBy", label: "创建人",
-        type: "Reference",  persistType: "", refEntity: "F_User",
+        type: "Reference", persistType: "", refEntity: "F_User",
         inputType: "Reference", hideInCreatePage: true, inEditPage: "hide"
     }
     fields._modifiedBy = fields._modifiedBy || {
@@ -311,7 +352,7 @@ export function systemFieldsForCommon(fields: {[fn: string]: FieldMeta}) {
     }
 }
 
-export function systemFieldsForMongo(fields: {[fn: string]: FieldMeta}) {
+export function systemFieldsForMongo(fields: { [fn: string]: FieldMeta }) {
     fields._id.type = "ObjectId"
     fields._id.persistType = "ObjectId"
 
@@ -324,7 +365,7 @@ export function systemFieldsForMongo(fields: {[fn: string]: FieldMeta}) {
     fields._modifiedBy.persistType = "String"
 }
 
-export function systemFieldsForMySQL(fields: {[fn: string]: FieldMeta}) {
+export function systemFieldsForMySQL(fields: { [fn: string]: FieldMeta }) {
     fields._id.type = "String"
     fields._id.persistType = "char"
     fields._id.sqlColM = ObjectIdStringLength
